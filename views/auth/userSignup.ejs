@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>User Signup</title>
+  <link rel="stylesheet" href="/public/css/auth.css">
+</head>
+<body>
+
+<%- include('../partials/authHeader') %>
+
+<main class="auth-page">
+  <div class="auth-card">
+    <h2>Create Account</h2>
+
+    <form method="POST" action="/signup">
+      <input type="email" name="email" placeholder="Email address" required />
+      <input type="password" name="password" placeholder="Password" required />
+      <button type="submit">Create Account</button>
+    </form>
+
+    <% if (error) { %>
+      <div class="auth-error"><%= error %></div>
+    <% } %>
+  </div>
+</main>
+
+</body>
+</html>

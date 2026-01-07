@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Admin Login</title>
+  <link rel="stylesheet" href="/public/css/auth.css">
+</head>
+<body>
+
+<%- include('../partials/authHeader') %>
+
+<main class="auth-page">
+  <div class="auth-card">
+    <h2>Admin Access</h2>
+
+    <form method="POST" action="/admin/login">
+      <input type="email" name="email" placeholder="Admin email" required />
+      <input type="password" name="password" placeholder="Password" required />
+      <button type="submit">Login</button>
+    </form>
+
+    <% if (error) { %>
+      <div class="auth-error"><%= error %></div>
+    <% } %>
+  </div>
+</main>
+
+</body>
+</html>

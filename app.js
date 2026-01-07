@@ -5,11 +5,18 @@ const session = require('express-session');
 const helmet = require('helmet');
 const path = require('path');
 
+
 const app = express();
 
+
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
+
 /**
- * Helmet with CSP enabled
- * No inline scripts or styles allowed
+ * ===============================
+ * Helmet (CSP enabled)
+ * No inline scripts or styles
+ * ===============================
  */
 app.use(
   helmet({
@@ -29,13 +36,17 @@ app.use(
 );
 
 /**
+ * ===============================
  * Body parsing
+ * ===============================
  */
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
 /**
+ * ===============================
  * Session (MemoryStore — DEV ONLY)
+ * ===============================
  */
 app.use(
   session({
@@ -45,26 +56,44 @@ app.use(
     saveUninitialized: false,
     cookie: {
       httpOnly: true,
-      secure: false,
+      secure: false, // true only in production with HTTPS
       sameSite: 'lax'
     }
   })
 );
 
 /**
+ * ===============================
  * Static assets
+ * ===============================
  */
 app.use('/public', express.static(path.join(__dirname, 'public')));
 
 /**
- * Health check route (NO BUSINESS LOGIC)
+ * ===============================
+ * Auth Routes (MOUNTED HERE)
+ * ===============================
+ */
+const adminAuthRoutes = require('./routes/admin.auth.routes');
+const userAuthRoutes = require('./routes/user.auth.routes');
+
+app.use('/admin', adminAuthRoutes); // /admin/login, /admin/register
+app.use('/', userAuthRoutes);       // /login, /signup
+
+/**
+ * ===============================
+ * Health check route
+ * (NO BUSINESS LOGIC)
+ * ===============================
  */
 app.get('/', (req, res) => {
   res.status(200).send('E-COMM PHASE 0 — FOUNDATION OK');
 });
 
 /**
+ * ===============================
  * Server start
+ * ===============================
  */
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
