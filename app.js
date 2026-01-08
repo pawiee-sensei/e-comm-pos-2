@@ -71,14 +71,18 @@ app.use('/public', express.static(path.join(__dirname, 'public')));
 
 /**
  * ===============================
- * Auth Routes (MOUNTED HERE)
+ * Routes (MOUNTED HERE)
  * ===============================
  */
 const adminAuthRoutes = require('./routes/admin.auth.routes');
 const userAuthRoutes = require('./routes/user.auth.routes');
+const adminUIRoutes = require('./routes/admin.ui.routes');
 
+
+app.use('/admin', adminUIRoutes);
 app.use('/admin', adminAuthRoutes); // /admin/login, /admin/register
 app.use('/', userAuthRoutes);       // /login, /signup
+
 
 /**
  * ===============================
@@ -87,7 +91,7 @@ app.use('/', userAuthRoutes);       // /login, /signup
  * ===============================
  */
 app.get('/', (req, res) => {
-  res.status(200).send('E-COMM PHASE 0 — FOUNDATION OK');
+  res.redirect('/admin');
 });
 
 /**

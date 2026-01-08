@@ -23,17 +23,14 @@ async function login(req, res) {
     role: 'admin'
   };
 
-  res.redirect('/');
+  const redirectTo = req.session.redirectTo || '/admin';
+  delete req.session.redirectTo;
+
+  return res.redirect(redirectTo);
 }
 
 function logout(req, res) {
-  req.session.destroy(() => {
-    res.redirect('/admin/login');
-  });
+  req.session.destroy(() => res.redirect('/admin/login'));
 }
 
-module.exports = {
-  showLogin,
-  login,
-  logout
-};
+module.exports = { showLogin, login, logout };
