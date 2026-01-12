@@ -6,6 +6,7 @@ const helmet = require('helmet');
 const path = require('path');
 
 
+
 const app = express();
 
 
@@ -77,11 +78,14 @@ app.use('/public', express.static(path.join(__dirname, 'public')));
 const adminAuthRoutes = require('./routes/admin.auth.routes');
 const userAuthRoutes = require('./routes/user.auth.routes');
 const adminUIRoutes = require('./routes/admin.ui.routes');
+const adminProductRoutes = require('./routes/admin.product.routes');
 
 
-app.use('/admin', adminUIRoutes);
-app.use('/admin', adminAuthRoutes); // /admin/login, /admin/register
-app.use('/', userAuthRoutes);       // /login, /signup
+
+app.use('/admin', adminAuthRoutes); 
+app.use('/', userAuthRoutes);
+app.use('/admin', adminProductRoutes);   // ← must be BEFORE UI
+app.use('/admin', adminUIRoutes);        // ← must be AFTER
 
 
 /**

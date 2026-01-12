@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Products</title>
+  <link rel="stylesheet" href="/public/css/admin.css">
+</head>
+<body>
+
+<%- include('../sidebar') %>
+
+<main id="panel-container">
+
+  
+<section class="prod-header">
+  <h1>Product Inventory</h1>
+  <a href="/admin/products/add" class="btn-primary">+ Add Product</a>
+</section>
+
+<section class="prod-filters">
+  <form method="GET" class="filters">
+    <input type="text" name="search" value="<%= search %>" placeholder="Search products…" class="input">
+
+    <select name="category_id" class="select">
+      <option value="">All Categories</option>
+      <% categories.forEach(c => { %>
+        <option value="<%= c.id %>" <%= category_id == c.id ? 'selected' : '' %>><%= c.name %></option>
+      <% }) %>
+    </select>
+
+    <button class="btn-secondary">Apply</button>
+  </form>
+</section>
+
+<section class="prod-table">
+  <table>
+    <thead>
+      <tr>
+        <th>Image</th>
+        <th>Product</th>
+        <th>Category</th>
+        <th>Stock</th>
+        <th>Price</th>
+        <th>Status</th>
+        <th class="action-col"></th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <% products.forEach(p => { %>
+        <tr>
+          <td>
+            <% if (p.image) { %>
+              <img src="/public/uploads/products/<%= p.image %>" class="p-img">
+            <% } else { %>
+              <div class="no-img">No Image</div>
+            <% } %>
+          </td>
+
+          <td class="p-name"><%= p.name %></td>
+
+          <td><%= p.category_name %></td>
+
+          <td><%= p.stock %></td>
+
+          <td>₱<%= p.price %></td>
+
+          <td>
+            <% if (p.stock == 0) { %>
+              <span class="status out">OUT</span>
+            <% } else if (p.stock <= 5) { %>
+              <span class="status low">LOW</span>
+            <% } else if (p.stock <= 20) { %>
+              <span class="status med">MED</span>
+            <% } else { %>
+              <span class="status good">GOOD</span>
+            <% } %>
+          </td>
+
+          <td class="actions">
+            <a href="/admin/products/edit/<%= p.id %>" class="btn-small edit">Edit</a>
+
+            <form method="POST" action="/admin/products/delete/<%= p.id %>" class="inline">
+              <button class="btn-small danger">Delete</button>
+            </form>
+          </td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</section>
+</main>
+
+<script src="/public/js/admin.js"></script>
+</body>
+</html>
