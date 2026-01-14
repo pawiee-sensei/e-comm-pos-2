@@ -5,11 +5,13 @@ const session = require('express-session');
 const helmet = require('helmet');
 const path = require('path');
 
-
-
 const app = express();
 
-
+/**
+ * ===============================
+ * View engine
+ * ===============================
+ */
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
@@ -28,7 +30,7 @@ app.use(
         styleSrc: ["'self'"],
         imgSrc: ["'self'", "data:"],
         fontSrc: ["'self'"],
-        connectSrc: ["'self'"],
+        connectSrc: ["'self'", "http://localhost:3000"], // allow AJAX fetch
         objectSrc: ["'none'"],
         upgradeInsecureRequests: []
       }
@@ -52,12 +54,12 @@ app.use(express.json());
 app.use(
   session({
     name: 'ecomm.sid',
-    secret: process.env.SESSION_SECRET,
+    secret: process.env.SESSION_SECRET || 'dev_secret',
     resave: false,
     saveUninitialized: false,
     cookie: {
       httpOnly: true,
-      secure: false, // true only in production with HTTPS
+      secure: false, // only true if https in production
       sameSite: 'lax'
     }
   })
@@ -72,26 +74,33 @@ app.use('/public', express.static(path.join(__dirname, 'public')));
 
 /**
  * ===============================
- * Routes (MOUNTED HERE)
+ * Routes (Mounted Here)
  * ===============================
  */
 const adminAuthRoutes = require('./routes/admin.auth.routes');
 const userAuthRoutes = require('./routes/user.auth.routes');
 const adminUIRoutes = require('./routes/admin.ui.routes');
-const adminProductRoutes = require('./routes/admin.product.routes');
 
-
-
-app.use('/admin', adminAuthRoutes); 
+app.use('/admin', adminAuthRoutes);
 app.use('/', userAuthRoutes);
-app.use('/admin', adminProductRoutes);   // ← must be BEFORE UI
-app.use('/admin', adminUIRoutes);        // ← must be AFTER
+
+// Admin UI shell (Sidebar + Dashboard Panels)
+app.use('/admin', adminUIRoutes);
+
+// Product Panel Routes (Phase 3 Part 1)
+app.use('/admin', require('./routes/admin.product.routes'));
+
+// AJAX: Stock Adjust
+app.use('/admin', require('./routes/admin.product.stock.routes'));
+
+// AJAX: Product Create
+app.use('/admin', require('./routes/admin.product.create.routes'));
+
 
 
 /**
  * ===============================
- * Health check route
- * (NO BUSINESS LOGIC)
+ * Root redirect
  * ===============================
  */
 app.get('/', (req, res) => {

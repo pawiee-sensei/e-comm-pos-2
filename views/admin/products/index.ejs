@@ -2,94 +2,139 @@
 <html>
 <head>
   <title>Products</title>
-  <link rel="stylesheet" href="/public/css/admin.css">
-</head>
+<link rel="stylesheet" href="/public/css/admin.css">
+<link rel="stylesheet" href="/public/css/products/products.css">
 <body>
 
+<!-- SIDEBAR (persistent) -->
 <%- include('../sidebar') %>
 
+<!-- MAIN PANEL -->
 <main id="panel-container">
 
-  
-<section class="prod-header">
-  <h1>Product Inventory</h1>
-  <a href="/admin/products/add" class="btn-primary">+ Add Product</a>
-</section>
+  <!-- HEADER -->
+  <section class="prod-header">
+    <h1>Product Inventory</h1>
+    <button id="btnAddProduct" class="btn-primary" type="button">+ Add Product</button>
+  </section>
 
-<section class="prod-filters">
-  <form method="GET" class="filters">
-    <input type="text" name="search" value="<%= search %>" placeholder="Search products…" class="input">
+  <!-- METRICS BAR -->
+  <section class="metrics-bar">
+    <div class="metric">
+      <div class="m-title">Total</div>
+      <div class="m-value"><%= metrics.total %></div>
+    </div>
+    <div class="metric">
+      <div class="m-title">Low Stock</div>
+      <div class="m-value"><%= metrics.low %></div>
+    </div>
+    <div class="metric">
+      <div class="m-title">Out of Stock</div>
+      <div class="m-value"><%= metrics.out %></div>
+    </div>
+    <div class="metric">
+      <div class="m-title">Healthy</div>
+      <div class="m-value"><%= metrics.healthy %></div>
+    </div>
+  </section>
 
-    <select name="category_id" class="select">
-      <option value="">All Categories</option>
-      <% categories.forEach(c => { %>
-        <option value="<%= c.id %>" <%= category_id == c.id ? 'selected' : '' %>><%= c.name %></option>
-      <% }) %>
-    </select>
+  <!-- FILTERS -->
+  <section class="prod-filters">
+    <form method="GET" class="filters">
+      <input type="text" name="search" value="<%= search %>" placeholder="Search products…" class="input">
 
-    <button class="btn-secondary">Apply</button>
-  </form>
-</section>
+      <select name="category_id" class="select">
+        <option value="">All Categories</option>
+        <% categories.forEach(c => { %>
+          <option value="<%= c.id %>" <%= category_id == c.id ? 'selected' : '' %>><%= c.name %></option>
+        <% }) %>
+      </select>
 
-<section class="prod-table">
-  <table>
-    <thead>
-      <tr>
-        <th>Image</th>
-        <th>Product</th>
-        <th>Category</th>
-        <th>Stock</th>
-        <th>Price</th>
-        <th>Status</th>
-        <th class="action-col"></th>
-      </tr>
-    </thead>
+      <button class="btn-secondary" type="submit">Apply</button>
+    </form>
+  </section>
 
-    <tbody>
-      <% products.forEach(p => { %>
+  <!-- TABLE -->
+  <section class="prod-table">
+    <table>
+      <thead>
         <tr>
-          <td>
-            <% if (p.image) { %>
-              <img src="/public/uploads/products/<%= p.image %>" class="p-img">
-            <% } else { %>
-              <div class="no-img">No Image</div>
-            <% } %>
-          </td>
-
-          <td class="p-name"><%= p.name %></td>
-
-          <td><%= p.category_name %></td>
-
-          <td><%= p.stock %></td>
-
-          <td>₱<%= p.price %></td>
-
-          <td>
-            <% if (p.stock == 0) { %>
-              <span class="status out">OUT</span>
-            <% } else if (p.stock <= 5) { %>
-              <span class="status low">LOW</span>
-            <% } else if (p.stock <= 20) { %>
-              <span class="status med">MED</span>
-            <% } else { %>
-              <span class="status good">GOOD</span>
-            <% } %>
-          </td>
-
-          <td class="actions">
-            <a href="/admin/products/edit/<%= p.id %>" class="btn-small edit">Edit</a>
-
-            <form method="POST" action="/admin/products/delete/<%= p.id %>" class="inline">
-              <button class="btn-small danger">Delete</button>
-            </form>
-          </td>
+          <th>Image</th>
+          <th>Product</th>
+          <th>Category</th>
+          <th>Stock</th>
+          <th>Price</th>
+          <th>Status</th>
+          <th class="action-col"></th>
         </tr>
-      <% }) %>
-    </tbody>
-  </table>
-</section>
+      </thead>
+
+      <tbody>
+        <% products.forEach(p => { %>
+          <tr>
+
+            <td>
+              <% if (p.image) { %>
+                <img src="/public/uploads/products/<%= p.image %>" class="p-img">
+              <% } else { %>
+                <div class="no-img">No Image</div>
+              <% } %>
+            </td>
+
+            <td class="p-name"><%= p.name %></td>
+            <td><%= p.category_name %></td>
+            <td><%= p.stock %></td>
+            <td>₱<%= p.price %></td>
+
+            <td>
+              <% if (p.stock == 0) { %>
+                <span class="status out">OUT</span>
+              <% } else if (p.stock <= 5) { %>
+                <span class="status low">LOW</span>
+              <% } else if (p.stock <= 20) { %>
+                <span class="status med">MED</span>
+              <% } else { %>
+                <span class="status good">GOOD</span>
+              <% } %>
+            </td>
+
+            <td class="actions">
+              <button 
+                class="btn-small stock"
+                data-id="<%= p.id %>"
+                data-name="<%= p.name %>"
+              >Adjust Stock</button>
+
+              <a href="/admin/products/edit/<%= p.id %>" class="btn-small edit">Edit</a>
+
+              <form method="POST" action="/admin/products/delete/<%= p.id %>" class="inline">
+                <button class="btn-small danger">Delete</button>
+              </form>
+            </td>
+
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- PAGINATION -->
+  <% if (pages && pages > 1) { %>
+  <div class="pagination">
+    <% for (let i = 1; i <= pages; i++) { %>
+      <a href="?page=<%= i %>" class="pg <%= i === page ? 'active' : '' %>"><%= i %></a>
+    <% } %>
+  </div>
+  <% } %>
+
 </main>
 
-<script src="/public/js/admin.js"></script>
+<!-- MODALS -->
+<%- include('_modal_adjust') %>
+<%- include('_modal_add') %>
+
+<!-- JS -->
+<script src="/public/js/products/products.js"></script>
+
 </body>
 </html>

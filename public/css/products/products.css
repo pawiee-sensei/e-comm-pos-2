@@ -1,0 +1,292 @@
+/* =============================
+   PRODUCT PANEL — BUSINESS PRO
+============================= */
+
+/* Header */
+.prod-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 22px;
+}
+
+.prod-header h1 {
+  font-size: 20px;
+  font-weight: 600;
+  color: #111827;
+}
+
+/* Metrics */
+.metrics-bar {
+  display: flex;
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.metric {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  padding: 10px 14px;
+  flex: 1;
+}
+
+.m-title {
+  font-size: 12px;
+  color: #6b7280;
+  margin-bottom: 4px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.m-value {
+  font-size: 18px;
+  font-weight: 600;
+  color: #111827;
+}
+
+/* Filters */
+.prod-filters {
+  margin-bottom: 18px;
+}
+
+.filters {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.input, .select {
+  padding: 7px 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 5px;
+  font-size: 14px;
+  background: white;
+  color: #1f2937;
+}
+
+/* Buttons */
+.btn-primary {
+  background: #2563eb;
+  color: white;
+  padding: 7px 14px;
+  border-radius: 5px;
+  text-decoration: none;
+  font-size: 14px;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-secondary {
+  background: #6b7280;
+  color: white;
+  padding: 7px 14px;
+  border-radius: 5px;
+  font-size: 14px;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-small {
+  padding: 4px 9px;
+  font-size: 12px;
+  border-radius: 4px;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.btn-small.edit {
+  background: #3b82f6;
+  color: white;
+  border: none;
+}
+
+.btn-small.danger {
+  background: #b91c1c;
+  color: white;
+  border: none;
+}
+
+.btn-small.stock {
+  background: #4b5563;
+  color: white;
+  border: none;
+}
+
+/* Table */
+.prod-table table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.prod-table th {
+  text-align: left;
+  padding: 10px;
+  background: #f8fafc;
+  font-size: 13px;
+  font-weight: 600;
+  color: #374151;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.prod-table td {
+  padding: 10px;
+  border-top: 1px solid #e5e7eb;
+  font-size: 14px;
+  color: #1f2937;
+}
+
+.p-img {
+  width: 42px;
+  height: 42px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.no-img {
+  width: 42px;
+  height: 42px;
+  background: #e5e7eb;
+  border-radius: 4px;
+  font-size: 11px;
+  color: #6b7280;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Status Tags (professional palette) */
+.status {
+  padding: 3px 7px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  color: white;
+  text-transform: uppercase;
+}
+
+.status.out { background: #991b1b; }
+.status.low { background: #dc2626; }
+.status.med { background: #ca8a04; }
+.status.good { background: #059669; }
+
+/* Actions */
+.actions {
+  display: flex;
+  gap: 6px;
+}
+
+.inline {
+  display: inline;
+}
+
+.action-col {
+  width: 160px;
+}
+
+/* Pagination */
+.pagination {
+  margin-top: 16px;
+  display: flex;
+  gap: 6px;
+}
+
+.pg {
+  display: inline-block;
+  padding: 5px 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  font-size: 13px;
+  text-decoration: none;
+  color: #111827;
+  background: white;
+}
+
+.pg.active {
+  background: #2563eb;
+  color: white;
+  border-color: #2563eb;
+}
+
+/* =============================
+   MODALS
+============================= */
+
+.hidden {
+  display: none !important;
+}
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.28);
+  backdrop-filter: blur(1px);
+  z-index: 90;
+}
+
+.modal-wrapper {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 91;
+}
+
+.modal-content {
+  background: white;
+  position: relative;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  width: 480px;
+  padding: 22px;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+}
+
+.modal-wrapper.hidden,
+.modal-backdrop.hidden {
+  display: none !important;
+}
+
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 14px;
+  color: #111827;
+}
+
+.modal-close-x {
+  background: transparent;
+  border: none;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  color: #6b7280;
+}
+
+.modal-close-x:hover {
+  color: #111827;
+}
+
+
+.modal-body {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 14px;
+}

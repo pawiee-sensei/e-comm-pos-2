@@ -1,0 +1,36 @@
+<div id="modal-backdrop" class="modal-backdrop hidden"></div>
+
+<div id="modal-add" class="modal-wrapper hidden">
+  <div class="modal-content">
+    <div class="modal-header">
+  <span>Add Product</span>
+  <button type="button" class="modal-close-x" data-close>X</button>
+  
+</div>
+
+
+    <form id="formAddProduct" method="POST" enctype="multipart/form-data">
+      <div class="modal-body">
+        <input type="text" id="p-name" name="name" placeholder="Product Name" class="input" required>
+
+        <input type="number" id="p-price" name="price" placeholder="Price" class="input" required>
+
+        <input type="number" id="p-stock" name="stock" placeholder="Initial Stock" class="input" required>
+
+        <select id="p-category" name="category_id" class="select" required>
+          <option value="">Select Category</option>
+          <% categories.forEach(c => { %>
+            <option value="<%= c.id %>"><%= c.name %></option>
+          <% }) %>
+        </select>
+
+        <input type="file" id="p-image" name="image" class="input">
+      </div>
+
+      <div class="modal-footer">
+       <button type="button" class="btn-secondary" data-close>Cancel</button>
+        <button type="submit" id="add-submit" class="btn-primary">Create</button>
+      </div>
+    </form>
+  </div>
+</div>

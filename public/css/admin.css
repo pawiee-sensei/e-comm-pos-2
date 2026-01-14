@@ -1,4 +1,6 @@
-/* GLOBAL LAYOUT */
+/* =============================
+   GLOBAL LAYOUT / SHELL
+============================= */
 body {
   margin: 0;
   display: flex;
@@ -6,9 +8,12 @@ body {
   background: #f6f7f9;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   color: #1f2937;
+  overflow: hidden; /* sidebar + panel scroll handled inside */
 }
 
-/* SIDEBAR BASE */
+/* =============================
+   SIDEBAR
+============================= */
 .sidebar {
   width: 240px;
   background: #1f2937;
@@ -20,7 +25,7 @@ body {
   border-right: 1px solid #111827;
 }
 
-/* HEADER INSIDE SIDEBAR */
+/* SIDEBAR HEADER */
 .sb-header {
   display: flex;
   align-items: center;
@@ -46,7 +51,7 @@ body {
   color: #e5e7eb;
 }
 
-/* NAVIGATION MENU */
+/* SIDEBAR MENU */
 .sb-menu {
   display: flex;
   flex-direction: column;
@@ -76,7 +81,7 @@ body {
   opacity: 0.9;
 }
 
-/* COLLAPSED STATE */
+/* COLLAPSE MODE */
 .sidebar.collapsed {
   width: 64px;
 }
@@ -93,156 +98,21 @@ body {
   display: none;
 }
 
-/* PANEL CONTAINER */
+/* =============================
+   PANEL / MAIN WORKSPACE
+============================= */
 #panel-container {
   flex: 1;
+  display: flex;
+  flex-direction: column;
   padding: 24px;
-  overflow-y: auto;
+  overflow-y: auto; /* scrolling inside panel */
   transition: margin-left 0.22s ease;
 }
 
-/* HEADINGS IN PANELS */
+/* PANEL HEADINGS (generic) */
 .panel h1 {
   font-size: 20px;
   font-weight: 600;
   margin-bottom: 12px;
-}
-
-/* HEADER */
-.prod-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 22px;
-}
-
-.prod-header h1 {
-  font-size: 22px;
-  font-weight: 600;
-}
-
-/* FILTER BAR */
-.prod-filters {
-  margin-bottom: 18px;
-}
-
-.filters {
-  display: flex;
-  gap: 12px;
-  align-items: center;
-}
-
-.input, .select {
-  padding: 8px 10px;
-  border: 1px solid #d1d5db;
-  border-radius: 5px;
-  font-size: 14px;
-  background: white;
-}
-
-/* BUTTONS */
-.btn-primary {
-  background: #2563eb;
-  color: white;
-  padding: 9px 16px;
-  border-radius: 5px;
-  text-decoration: none;
-  font-size: 14px;
-}
-
-.btn-secondary {
-  background: #6b7280;
-  color: white;
-  padding: 8px 14px;
-  border-radius: 5px;
-  font-size: 14px;
-}
-
-.btn-small {
-  padding: 4px 10px;
-  font-size: 12px;
-  border-radius: 4px;
-  text-decoration: none;
-}
-
-.btn-small.edit {
-  background: #3b82f6;
-  color: white;
-}
-
-.btn-small.danger {
-  background: #dc2626;
-  color: white;
-  border: none;
-  cursor: pointer;
-}
-
-/* TABLE */
-.prod-table table {
-  width: 100%;
-  border-collapse: collapse;
-  background: white;
-  border-radius: 6px;
-  overflow: hidden;
-}
-
-.prod-table th {
-  text-align: left;
-  padding: 12px;
-  background: #f3f4f6;
-  font-size: 13px;
-  font-weight: 600;
-  color: #4b5563;
-}
-
-.prod-table td {
-  padding: 12px;
-  border-top: 1px solid #e5e7eb;
-  font-size: 14px;
-}
-
-.p-img {
-  width: 45px;
-  height: 45px;
-  object-fit: cover;
-  border-radius: 4px;
-}
-
-.no-img {
-  width: 45px;
-  height: 45px;
-  background: #e5e7eb;
-  border-radius: 4px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 11px;
-  color: #6b7280;
-}
-
-/* STATUS TAGS */
-.status {
-  padding: 3px 8px;
-  border-radius: 4px;
-  font-size: 11px;
-  font-weight: 600;
-  color: white;
-}
-
-.status.out { background: #991b1b; }
-.status.low { background: #dc2626; }
-.status.med { background: #d97706; }
-.status.good { background: #059669; }
-
-.actions {
-  display: flex;
-  gap: 8px;
-}
-
-.inline {
-  display: inline;
-}
-
-.action-col {
-  width: 150px;
 }

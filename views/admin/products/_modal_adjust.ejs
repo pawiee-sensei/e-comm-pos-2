@@ -1,0 +1,23 @@
+<div id="modal-adjust" class="modal-wrapper hidden">
+  <div class="modal-content">
+    <div class="modal-header">Adjust Stock</div>
+
+    <form id="formAdjustStock" method="POST">
+      <div class="modal-body">
+        <input type="number" id="adjust-qty" name="qty" placeholder="Quantity" class="input" required>
+
+        <select id="adjust-type" name="type" class="select">
+          <option value="add">Add</option>
+          <option value="deduct">Deduct</option>
+        </select>
+
+        <input type="text" id="adjust-reason" name="reason" placeholder="Reason (optional)" class="input">
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn-secondary modal-close" data-close>Cancel</button>
+        <button type="submit" id="adjust-submit" class="btn-primary">Submit</button>
+      </div>
+    </form>
+  </div>
+</div>
