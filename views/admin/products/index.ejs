@@ -2,11 +2,12 @@
 <html>
 <head>
   <title>Products</title>
-<link rel="stylesheet" href="/public/css/admin.css">
-<link rel="stylesheet" href="/public/css/products/products.css">
+  <link rel="stylesheet" href="/public/css/admin.css">
+  <link rel="stylesheet" href="/public/css/products/products.css">
+</head>
 <body>
 
-<!-- SIDEBAR (persistent) -->
+<!-- SIDEBAR -->
 <%- include('../sidebar') %>
 
 <!-- MAIN PANEL -->
@@ -18,7 +19,7 @@
     <button id="btnAddProduct" class="btn-primary" type="button">+ Add Product</button>
   </section>
 
-  <!-- METRICS BAR -->
+  <!-- METRICS -->
   <section class="metrics-bar">
     <div class="metric">
       <div class="m-title">Total</div>
@@ -38,7 +39,7 @@
     </div>
   </section>
 
-  <!-- FILTERS -->
+  <!-- FILTER BAR -->
   <section class="prod-filters">
     <form method="GET" class="filters">
       <input type="text" name="search" value="<%= search %>" placeholder="Search products…" class="input">
@@ -71,7 +72,7 @@
 
       <tbody>
         <% products.forEach(p => { %>
-          <tr>
+          <tr data-id="<%= p.id %>">
 
             <td>
               <% if (p.image) { %>
@@ -83,10 +84,14 @@
 
             <td class="p-name"><%= p.name %></td>
             <td><%= p.category_name %></td>
-            <td><%= p.stock %></td>
+
+            <!-- LIVE UPDATE HOOK -->
+            <td class="td-stock"><%= p.stock %></td>
+
             <td>₱<%= p.price %></td>
 
-            <td>
+            <!-- LIVE UPDATE STATUS -->
+            <td class="td-status">
               <% if (p.stock == 0) { %>
                 <span class="status out">OUT</span>
               <% } else if (p.stock <= 5) { %>
@@ -99,8 +104,9 @@
             </td>
 
             <td class="actions">
+              <!-- REQUIRED BUTTON HOOK -->
               <button 
-                class="btn-small stock"
+                class="btn-small stock btn-adjust"
                 data-id="<%= p.id %>"
                 data-name="<%= p.name %>"
               >Adjust Stock</button>

@@ -27,10 +27,18 @@ exports.findAll = async ({ search, category_id, offset, limit }) => {
 };
 
 exports.findById = async (id) => {
-  const [rows] = await db.query(
-    `SELECT * FROM products WHERE id = ? LIMIT 1`, [id]
+  const [r] = await db.query(
+    `SELECT * FROM products WHERE id=? LIMIT 1`,
+    [id]
   );
-  return rows[0] || null;
+  return r[0];
+};
+
+exports.updateStock = async (id, stock) => {
+  await db.query(
+    `UPDATE products SET stock=? WHERE id=?`,
+    [stock, id]
+  );
 };
 
 exports.countAll = async ({ search, category_id }) => {
@@ -51,7 +59,7 @@ exports.countAll = async ({ search, category_id }) => {
   return rows[0].total;
 };
 
-// Metrics
+// metrics helper
 exports.countStockRange = async ({ min, max }) => {
   let sql = `SELECT COUNT(*) AS total FROM products WHERE 1=1`;
   const params = [];
@@ -72,7 +80,8 @@ exports.countStockRange = async ({ min, max }) => {
 
 exports.countStockEqual = async (value) => {
   const [rows] = await db.query(
-    `SELECT COUNT(*) AS total FROM products WHERE stock = ?`, [value]
+    `SELECT COUNT(*) AS total FROM products WHERE stock = ?`,
+    [value]
   );
   return rows[0].total;
 };
@@ -80,20 +89,25 @@ exports.countStockEqual = async (value) => {
 exports.update = async (id, data) => {
   const { name, category_id, price, stock, image } = data;
   await db.query(
-    `UPDATE products SET name=?, category_id=?, price=?, stock=?, image=? WHERE id=?`,
+    `UPDATE products
+     SET name=?, category_id=?, price=?, stock=?, image=?
+     WHERE id=?`,
     [name, category_id, price, stock, image, id]
   );
 };
 
 exports.delete = async (id) => {
-  await db.query(`DELETE FROM products WHERE id=?`, [id]);
+  await db.query(
+    `DELETE FROM products WHERE id=?`,
+    [id]
+  );
 };
 
 exports.create = async ({ name, category_id, price, stock, image }) => {
   const [r] = await db.query(
     `INSERT INTO products (name, category_id, price, stock, image)
      VALUES (?, ?, ?, ?, ?)`,
-    [name, category_id, price, stock, image]
+    [name, category_id, price, stock, image || null]
   );
   return r.insertId;
 };
