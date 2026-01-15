@@ -2,7 +2,14 @@ const db = require('../db');
 
 exports.findAll = async ({ search, category_id, offset, limit }) => {
   let sql = `
-    SELECT p.id, p.name, p.price, p.stock, p.image, c.name AS category_name
+    SELECT 
+      p.id,
+      p.name,
+      p.price,
+      p.stock,
+      p.image,
+      p.category_id,
+      c.name AS category_name
     FROM products p
     LEFT JOIN categories c ON c.id = p.category_id
     WHERE 1=1
@@ -25,6 +32,9 @@ exports.findAll = async ({ search, category_id, offset, limit }) => {
   const [rows] = await db.query(sql, params);
   return rows;
 };
+
+
+
 
 exports.findById = async (id) => {
   const [r] = await db.query(
@@ -111,3 +121,24 @@ exports.create = async ({ name, category_id, price, stock, image }) => {
   );
   return r.insertId;
 };
+
+exports.updateProduct = async ({ id, name, price, category_id, image }) => {
+  let sql = `
+    UPDATE products
+    SET name=?, price=?, category_id=?, updated_at=NOW()
+  `;
+
+  const params = [name, price, category_id];
+
+  if (image) {
+    sql += `, image = ?`;
+    params.push(image);
+  }
+
+  sql += ` WHERE id = ?`;
+  params.push(id);
+
+  await db.query(sql, params);
+};
+
+

@@ -75,12 +75,13 @@
           <tr data-id="<%= p.id %>">
 
             <td>
-              <% if (p.image) { %>
-                <img src="/public/uploads/products/<%= p.image %>" class="p-img">
-              <% } else { %>
-                <div class="no-img">No Image</div>
-              <% } %>
-            </td>
+  <% if (p.image && p.image !== 'null') { %>
+    <img src="/public/uploads/products/<%= p.image %>" class="p-img">
+  <% } else { %>
+    <div class="no-img">No Image</div>
+  <% } %>
+</td>
+
 
             <td class="p-name"><%= p.name %></td>
             <td><%= p.category_name %></td>
@@ -110,8 +111,17 @@
                 data-id="<%= p.id %>"
                 data-name="<%= p.name %>"
               >Adjust Stock</button>
+                <button
+                  class="btn-small edit btn-edit"
+                  data-id="<%= p.id %>"
+                  data-name="<%= p.name %>"
+                  data-price="<%= p.price %>"
+                  data-stock="<%= p.stock %>"
+                  data-category="<%= p.category_id !== null ? p.category_id : '' %>"
+                  data-image="<%= p.image %>"
+                >Edit</button>
 
-              <a href="/admin/products/edit/<%= p.id %>" class="btn-small edit">Edit</a>
+
 
               <form method="POST" action="/admin/products/delete/<%= p.id %>" class="inline">
                 <button class="btn-small danger">Delete</button>
@@ -138,9 +148,12 @@
 <!-- MODALS -->
 <%- include('_modal_adjust') %>
 <%- include('_modal_add') %>
+<%- include('_modal_edit') %>
 
 <!-- JS -->
 <script src="/public/js/products/products.js"></script>
+
+<div id="modal-backdrop" class="modal-backdrop hidden"></div>
 
 </body>
 </html>

@@ -96,6 +96,10 @@ app.use('/admin', require('./routes/admin.product.stock.routes'));
 // AJAX: Product Create
 app.use('/admin', require('./routes/admin.product.create.routes'));
 
+app.use('/admin', require('./routes/admin.product.update.routes'));
+
+
+
 
 
 /**
