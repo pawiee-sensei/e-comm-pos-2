@@ -1,32 +1,42 @@
 const Product = require('../models/product.model');
+const Activity = require('../models/product.activity.model');
 
 exports.updateAjax = async (req, res) => {
   try {
-    let { id, name, price, category_id } = req.body;
-category_id = category_id === '' ? null : category_id;
+    const { id, name, price, category_id } = req.body;
 
-    let image = req.file ? req.file.filename : null;
+    const existing = await Product.findById(id);
+    if (!existing) return res.json({ ok:false, msg:'Product not found' });
 
-// if no new image, keep old
-if (!req.file) {
-  const old = await Product.findById(id);
-  image = old.image; // preserve existing filename
-}
-
-
-    await Product.updateProduct({
-      id,
+    const payload = {
       name,
       price,
       category_id,
-      image
+      stock: existing.stock,
+      image: req.file ? req.file.filename : existing.image
+    };
+
+    await Product.update(id, payload);
+
+    await Activity.log({
+      product_id: id,
+      action: 'edit',
+      snapshot_name: payload.name,
+      details: `Edited product (${name}, ₱${price})`
     });
 
-    return res.json({ ok: true });
+    return res.json({
+      ok: true,
+      updated: {
+        name,
+        price,
+        category_id,
+        stock: existing.stock
+      }
+    });
 
   } catch (err) {
-    console.log('UPDATE ERROR:', err);
-    return res.json({ ok: false, msg: 'Server error' });
+    console.error("UPDATE AJAX ERROR:", err);
+    return res.json({ ok:false, msg:'Server error' });
   }
 };
-    

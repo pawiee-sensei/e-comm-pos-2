@@ -1,10 +1,10 @@
 /* =======================================================
    MODAL ELEMENTS
 ======================================================= */
-const modalAdd   = document.getElementById('modal-add');
-const modalAdjust = document.getElementById('modal-adjust');
-const modalEdit   = document.getElementById('modal-edit');
-const backdrop    = document.getElementById('modal-backdrop');
+const modalAdd     = document.getElementById('modal-add');
+const modalAdjust  = document.getElementById('modal-adjust');
+const modalEdit    = document.getElementById('modal-edit');
+const backdrop     = document.getElementById('modal-backdrop');
 
 /* =======================================================
    STATE
@@ -41,23 +41,15 @@ document.querySelectorAll('.btn-edit').forEach(btn => {
 
     document.getElementById('e-name').value = btn.dataset.name || '';
     document.getElementById('e-price').value = btn.dataset.price || '';
-
-    const categorySelect = document.getElementById('e-category');
-
-    // REAL FIX RIGHT HERE
-    const cat = btn.dataset.category;
-document.getElementById('e-category').value = String(cat);
-
-
+    document.getElementById('e-category').value = String(btn.dataset.category || '');
 
     backdrop.classList.remove('hidden');
     modalEdit.classList.remove('hidden');
   });
 });
 
-
 /* =======================================================
-   SUBMIT: ADJUST STOCK (LIVE UPDATE, NO RELOAD)
+   SUBMIT: ADJUST STOCK
 ======================================================= */
 document.getElementById('adjust-submit').onclick = async (e) => {
   e.preventDefault();
@@ -71,34 +63,31 @@ document.getElementById('adjust-submit').onclick = async (e) => {
     headers: { 'Content-Type':'application/json' },
     body: JSON.stringify({
       product_id: adjustProductId,
-      qty, type, reason
+      qty,
+      type,
+      reason
     })
   });
 
   const j = await r.json();
-  if (!j || j.ok === false) {
-    alert(j?.msg || 'Server error');
+  if (!j.ok) {
+    alert(j.msg || 'Server error');
     return;
   }
 
-  // LIVE UPDATE ROW
-  const row = document.querySelector(`tr[data-id="${adjustProductId}"]`);
-  if (row) {
-    const tdStock = row.querySelector('.td-stock');
-    if (tdStock) tdStock.textContent = j.new_stock;
-
-    const tdStatus = row.querySelector('.td-status span');
-    if (tdStatus) {
-      tdStatus.className  = 'status ' + j.status.toLowerCase();
-      tdStatus.textContent = j.status;
-    }
-  }
-
-  closeModals();
+  // reload to refresh BOTH logs
+  location.reload();
 };
 
+
+
+
+
 /* =======================================================
-   SUBMIT: EDIT PRODUCT (RELOAD FOR NOW)
+   SUBMIT: EDIT PRODUCT (SERVER FORM SUBMIT)
+======================================================= */
+/* =======================================================
+   SUBMIT: EDIT PRODUCT (AJAX + LIVE UPDATE)
 ======================================================= */
 document.getElementById('edit-submit').onclick = async (e) => {
   e.preventDefault();
@@ -108,13 +97,42 @@ document.getElementById('edit-submit').onclick = async (e) => {
   fd.append('name', document.getElementById('e-name').value);
   fd.append('price', document.getElementById('e-price').value);
   fd.append('category_id', document.getElementById('e-category').value);
-
-  // optional image replace
   const img = document.getElementById('e-image').files[0];
-if (img) fd.append('image', img);
+  if (img) fd.append('image', img);
+
+  const r = await fetch('/admin/ajax/product-update', { method:'POST', body: fd });
+  const j = await r.json();
+  if (!j.ok) return alert(j.msg || 'Server error');
+
+  // LIVE UPDATE TABLE
+  const row = document.querySelector(`tr[data-id="${editProductId}"]`);
+  if (row) {
+    row.querySelector('.p-name').textContent = j.updated.name;
+    row.querySelector('.td-stock').textContent = j.updated.stock;
+    row.querySelector('td:nth-child(5)').textContent = '₱' + j.updated.price;
+  }
+
+  // reload logs but not table
+  location.reload();
+};
 
 
-  const r = await fetch('/admin/ajax/product-update', {
+/* =======================================================
+   SUBMIT: ADD PRODUCT (AJAX, THEN RELOAD)
+======================================================= */
+document.getElementById('add-submit').onclick = async (e) => {
+  e.preventDefault();
+
+  const fd = new FormData();
+  fd.append('name', document.getElementById('p-name').value);
+  fd.append('price', document.getElementById('p-price').value);
+  fd.append('stock', document.getElementById('p-stock').value);
+  fd.append('category_id', document.getElementById('p-category').value);
+
+  const img = document.getElementById('p-image').files[0];
+  if (img) fd.append('image', img);
+
+  const r = await fetch('/admin/ajax/product-create', {
     method: 'POST',
     body: fd
   });
@@ -128,43 +146,23 @@ if (img) fd.append('image', img);
   location.reload();
 };
 
-/* =======================================================
-   SUBMIT: ADD PRODUCT
-======================================================= */
-document.getElementById('add-submit').onclick = async (e) => {
-  e.preventDefault();
 
-  const fd = new FormData();
-  fd.append('name', document.getElementById('p-name').value);
-  fd.append('price', document.getElementById('p-price').value);
-  fd.append('stock', document.getElementById('p-stock').value);
-  fd.append('category_id', document.getElementById('p-category').value);
-  fd.append('image', document.getElementById('p-image').files[0] || null);
-
-  const r = await fetch('/admin/ajax/product-create', {
-    method: 'POST',
-    body: fd
-  });
-
-  const j = await r.json();
-  if (j.ok) location.reload();
-};
 
 /* =======================================================
    UNIVERSAL CLOSE HANDLERS
 ======================================================= */
 function closeModals() {
-  modalAdd.classList.add('hidden');
-  modalAdjust.classList.add('hidden');
-  modalEdit.classList.add('hidden');
-  backdrop.classList.add('hidden');
+  modalAdd?.classList.add('hidden');
+  modalAdjust?.classList.add('hidden');
+  modalEdit?.classList.add('hidden');
+  backdrop?.classList.add('hidden');
 }
 
 document.querySelectorAll('[data-close]').forEach(btn => {
   btn.addEventListener('click', closeModals);
 });
 
-backdrop.addEventListener('click', closeModals);
+backdrop?.addEventListener('click', closeModals);
 
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape') closeModals();

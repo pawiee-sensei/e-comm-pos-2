@@ -75,13 +75,12 @@
           <tr data-id="<%= p.id %>">
 
             <td>
-  <% if (p.image && p.image !== 'null') { %>
-    <img src="/public/uploads/products/<%= p.image %>" class="p-img">
-  <% } else { %>
-    <div class="no-img">No Image</div>
-  <% } %>
-</td>
-
+              <% if (p.image && p.image !== 'null') { %>
+                <img src="/public/uploads/products/<%= p.image %>" class="p-img">
+              <% } else { %>
+                <div class="no-img">No Image</div>
+              <% } %>
+            </td>
 
             <td class="p-name"><%= p.name %></td>
             <td><%= p.category_name %></td>
@@ -105,23 +104,21 @@
             </td>
 
             <td class="actions">
-              <!-- REQUIRED BUTTON HOOK -->
               <button 
                 class="btn-small stock btn-adjust"
                 data-id="<%= p.id %>"
                 data-name="<%= p.name %>"
               >Adjust Stock</button>
-                <button
-                  class="btn-small edit btn-edit"
-                  data-id="<%= p.id %>"
-                  data-name="<%= p.name %>"
-                  data-price="<%= p.price %>"
-                  data-stock="<%= p.stock %>"
-                  data-category="<%= p.category_id !== null ? p.category_id : '' %>"
-                  data-image="<%= p.image %>"
-                >Edit</button>
 
-
+              <button
+                class="btn-small edit btn-edit"
+                data-id="<%= p.id %>"
+                data-name="<%= p.name %>"
+                data-price="<%= p.price %>"
+                data-stock="<%= p.stock %>"
+                data-category="<%= p.category_id !== null ? p.category_id : '' %>"
+                data-image="<%= p.image %>"
+              >Edit</button>
 
               <form method="POST" action="/admin/products/delete/<%= p.id %>" class="inline">
                 <button class="btn-small danger">Delete</button>
@@ -134,14 +131,108 @@
     </table>
   </section>
 
-  <!-- PAGINATION -->
+  <!-- PRODUCT PAGINATION -->
   <% if (pages && pages > 1) { %>
   <div class="pagination">
     <% for (let i = 1; i <= pages; i++) { %>
-      <a href="?page=<%= i %>" class="pg <%= i === page ? 'active' : '' %>"><%= i %></a>
+      <a href="?page=<%= i %>" 
+         class="pg <%= i === page ? 'active' : '' %>">
+         <%= i %>
+      </a>
     <% } %>
   </div>
   <% } %>
+
+  <!-- =========================================== -->
+  <!-- STOCK LOG -->
+  <!-- =========================================== -->
+
+<section class="panel panel-logs">
+  <h2 class="panel-title">Stock Log</h2>
+
+  <% const _logs = Array.isArray(logs) ? logs : []; %>
+
+  <table class="log-table">
+    <thead>
+      <tr>
+        <th>Date</th>
+        <th>Product</th>
+        <th>Action</th>
+        <th>Qty</th>
+        <th>Stock</th>
+        <th>Reason</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <% if (_logs.length === 0) { %>
+        <tr>
+          <td colspan="6" style="text-align:center;color:#6b7280">No activity yet</td>
+        </tr>
+      <% } else { %>
+        <% _logs.forEach(l => { %>
+          <tr>
+            <td><%= new Date(l.created_at).toLocaleString() %></td>
+            <td style="display:flex;align-items:center;gap:6px;">
+              <% if (l.product_image) { %>
+                <img src="/public/uploads/products/<%= l.product_image %>" class="log-img">
+              <% } %>
+              <%= l.product_name %>
+            </td>
+            <td><%= l.action %></td>
+            <td><%= l.qty ?? '-' %></td>
+            <td><%= l.prev_stock ?? '-' %> → <%= l.new_stock ?? '-' %></td>
+            <td><%= l.reason || '-' %></td>
+          </tr>
+        <% }) %>
+      <% } %>
+    </tbody>
+  </table>
+
+  <!-- STOCK LOG PAGINATION -->
+  <% if (typeof logPages !== 'undefined' && logPages > 1) { %>
+  <div class="pagination" style="margin-top:10px;">
+    <% for (let i = 1; i <= logPages; i++) { %>
+      <a href="?logpage=<%= i %>" 
+         class="pg <%= i === logPage ? 'active' : '' %>">
+         <%= i %>
+      </a>
+    <% } %>
+  </div>
+  <% } %>
+</section>
+
+<!-- ACTIVITY LOG -->
+<section class="panel panel-logs">
+  <h2 class="panel-title">Activity Log</h2>
+
+  <% const _activity = Array.isArray(activityLogs) ? activityLogs : []; %>
+
+  <% if (_activity.length === 0) { %>
+    <div class="log-empty">No recent activity</div>
+  <% } else { %>
+    <table class="log-table">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Product</th>
+          <th>Action</th>
+          <th>Details</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% _activity.forEach(a => { %>
+          <tr>
+            <td><%= new Date(a.created_at).toLocaleString() %></td>
+            <td><%= a.product_name || '(deleted)' %></td>
+            <td><%= a.action.toUpperCase() %></td>
+            <td><%= a.details || '-' %></td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  <% } %>
+</section>
 
 </main>
 

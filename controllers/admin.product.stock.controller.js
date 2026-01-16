@@ -21,17 +21,18 @@ exports.adjustAjax = async (req, res) => {
 
     await Product.updateStock(product_id, newStock);
 
+    // STOCK LOG ONLY
     await Stock.log({
   product_id,
-  action: type,            // 'add' or 'deduct'
-  qty: delta,              // keep positive integer
+  action: type,
+  qty: delta,
   prev_stock: current,
   new_stock: newStock,
   reason: reason || null
 });
 
 
-    // safe status calc
+    // SAFE JSON RETURN
     let status = 'GOOD';
     if (newStock === 0) status = 'OUT';
     else if (newStock <= 5) status = 'LOW';
@@ -44,8 +45,7 @@ exports.adjustAjax = async (req, res) => {
     });
 
   } catch (err) {
-    console.log('STOCK ADJUST ERROR:', err);
+    console.error('ADJUST ERROR:', err);
     return res.json({ ok:false, msg:'Server error' });
   }
 };
-

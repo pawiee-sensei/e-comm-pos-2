@@ -98,6 +98,7 @@ app.use('/admin', require('./routes/admin.product.create.routes'));
 
 app.use('/admin', require('./routes/admin.product.update.routes'));
 
+app.use('/admin', require('./routes/admin.product.logs.routes'));
 
 
 

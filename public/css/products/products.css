@@ -217,8 +217,6 @@
    MODALS
 ============================= */
 
-
-
 .hidden {
   display: none !important;
 }
@@ -255,7 +253,6 @@
   display: none !important;
 }
 
-
 .modal-header {
   display: flex;
   justify-content: space-between;
@@ -279,7 +276,6 @@
   color: #111827;
 }
 
-
 .modal-body {
   display: flex;
   flex-direction: column;
@@ -292,7 +288,6 @@
   gap: 10px;
   margin-top: 14px;
 }
-
 
 .modal-title {
   font-size: 18px;
@@ -339,3 +334,65 @@
   padding: 8px 16px;
   font-size: 14px;
 }
+
+/* =============================
+   ACTIVITY LOG (SUBTLE STYLE)
+============================= */
+
+.panel-logs {
+  margin-top: 24px;
+  background: white;
+  padding: 14px 18px;
+  border-radius: 6px;
+  border: 1px solid #e5e7eb;
+}
+
+.panel-title {
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.log-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.log-table th {
+  text-align: left;
+  padding: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  background: #f3f4f6;
+  color: #374151;
+}
+
+.log-table td {
+  padding: 8px;
+  border-top: 1px solid #e5e7eb;
+  font-size: 13px;
+  color: #1f2937;
+}
+
+.log-empty {
+  text-align: center;
+  color: #6b7280;
+  padding: 16px;
+}
+
+/* SUBTLE BADGES */
+.log-badge {
+  padding: 3px 7px;
+  font-size: 11px;
+  font-weight: 600;
+  border-radius: 4px;
+  background: #e5e7eb;
+  color: #374151;
+}
+
+/* differentiators */
+.log-create { background:#e5e7eb; }
+.log-edit   { background:#e5e7eb; }
+.log-delete { background:#e5e7eb; color:#991b1b; }
+.log-add    { background:#dbeafe; color:#1e3a8a; }
+.log-deduct { background:#fce7f3; color:#9d174d; }

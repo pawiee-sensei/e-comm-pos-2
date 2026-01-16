@@ -1,10 +1,15 @@
 const express = require('express');
-const router = express.Router();
 const multer = require('multer');
-const c = require('../controllers/admin.product.update.controller');
+const router = express.Router();
+const controller = require('../controllers/admin.product.update.controller');
 
-const upload = multer({ dest: 'public/uploads/products' });
+const storage = multer.diskStorage({
+  destination: 'public/uploads/products',
+  filename: (req, file, cb) => cb(null, Date.now() + '_' + file.originalname)
+});
 
-router.post('/ajax/product-update', upload.single('image'), c.updateAjax);
+const upload = multer({ storage });
+
+router.post('/ajax/product-update', upload.single('image'), controller.updateAjax);
 
 module.exports = router;
