@@ -84,6 +84,8 @@ const adminUIRoutes = require('./routes/admin.ui.routes');
 app.use('/admin', adminAuthRoutes);
 app.use('/', userAuthRoutes);
 
+app.use('/', require('./routes/user.shop.routes'));
+
 // Admin UI shell (Sidebar + Dashboard Panels)
 app.use('/admin', adminUIRoutes);
 

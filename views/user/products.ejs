@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Products</title>
+  <link rel="stylesheet" href="/public/css/user.css">
+</head>
+<body>
+
+<%- include('./partials/navbar') %>
+
+<main class="u-container">
+
+  <section class="u-grid">
+    <% products.forEach(p => { %>
+      <div class="u-card">
+        <% if (p.image) { %>
+          <img src="/public/uploads/products/<%= p.image %>" class="u-img">
+        <% } %>
+
+        <div class="u-title"><%= p.name %></div>
+
+        <div class="u-price">₱<%= p.price %></div>
+
+        <button class="u-btn-add"
+          data-id="<%= p.id %>"
+          data-name="<%= p.name %>"
+          data-price="<%= p.price %>"
+        >Add</button>
+      </div>
+    <% }) %>
+  </section>
+</main>
+
+<script src="/public/js/user/products.js"></script>
+
+</body>
+</html>
