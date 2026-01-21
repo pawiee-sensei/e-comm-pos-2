@@ -1,13 +1,12 @@
 <nav class="u-nav">
-  <div class="u-brand">Cafe Market</div>
+  <div class="u-nav-left">Cafe Market</div>
 
-  <div class="u-links">
-    <a href="/">Home</a>
-    <a href="/products">Products</a>
-    <a href="/cart">Cart</a>
+  <div class="u-nav-right">
+    <a href="/" class="u-nav-link">Home</a>
+    <a href="/products" class="u-nav-link">Products</a>
+    <a href="/cart" class="u-nav-link">
+      Cart
+      <span id="u-cart-badge" class="u-badge hidden">0</span>
+    </a>
   </div>
-
-  <form method="GET" action="/products" class="u-search">
-    <input type="text" name="q" placeholder="Search…">
-  </form>
 </nav>

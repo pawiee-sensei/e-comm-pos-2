@@ -1,84 +1,70 @@
+/* BASE --------------------------------------------------- */
+
 body {
   margin:0;
-  background:#faf7f3;
-  font-family:'Segoe UI', sans-serif;
-}
-
-.u-nav {
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  padding:10px 20px;
-  background:#ffffff;
-  border-bottom:1px solid #e5e5e5;
-}
-
-.u-brand {
-  font-weight:600;
-  font-size:18px;
-}
-
-.u-links a {
-  margin:0 10px;
-  text-decoration:none;
+  background:#f4f2ef;
+  font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   color:#333;
-}
-
-.u-search input {
-  padding:6px 10px;
-  border:1px solid #ccc;
-  border-radius:5px;
 }
 
 .u-container {
+  width:100%;
+  max-width:1280px;
+  margin:0 auto;
   padding:20px;
 }
 
-.u-grid {
-  display:grid;
-  grid-template-columns:repeat(auto-fill, minmax(180px,1fr));
-  gap:16px;
+/* NAVBAR -------------------------------------------------- */
+
+.u-nav {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:14px 24px;
+  background:#ffffff;
+  border-bottom:1px solid #e2ded9;
+  position:sticky;
+  top:0;
+  z-index:20;
 }
 
-.u-card {
-  background:white;
-  border-radius:10px;
-  padding:12px;
-  box-shadow:0 1px 3px rgba(0,0,0,0.08);
-  text-align:center;
-}
-
-.u-img {
-  width:100%;
-  height:150px;
-  object-fit:cover;
-  border-radius:8px;
-}
-
-.u-title {
-  margin:10px 0 6px;
+.u-nav-left {
+  font-size:20px;
   font-weight:600;
+  color:#5a3f2e;
+}
+
+.u-nav-right {
+  display:flex;
+  align-items:center;
+  gap:18px;
+}
+
+.u-nav-link {
   color:#333;
+  text-decoration:none;
+  font-size:14px;
+  position:relative;
 }
 
-.u-price {
-  margin-bottom:10px;
-  font-weight:500;
-  color:#444;
+.u-nav-link:hover {
+  color:#5a3f2e;
 }
 
-.u-btn-add {
-  padding:6px 12px;
+/* CART BADGE --------------------------------------------- */
+
+.u-badge {
+  position:absolute;
+  top:-6px;
+  right:-10px;
   background:#8b5e3c;
-  border:none;
   color:white;
-  border-radius:5px;
-  cursor:pointer;
+  font-size:11px;
+  padding:2px 6px;
+  border-radius:10px;
 }
 
-.u-btn-add:hover {
-  background:#704927;
-}
+/* HERO ---------------------------------------------------- */
 
 .u-hero {
   margin-top:40px;
@@ -104,4 +90,205 @@ body {
   color:white;
   border-radius:6px;
   text-decoration:none;
+  font-size:14px;
+}
+
+/* SEARCH + FILTERS (USER SIDE) --------------------------- */
+
+.u-filter-bar {
+  display:flex;
+  gap:10px;
+  align-items:center;
+  margin-bottom:20px;
+}
+
+.u-search {
+  width:240px;
+  padding:8px 11px;
+  border:1px solid #d1cecb;
+  background:white;
+  border-radius:6px;
+  font-size:14px;
+}
+
+.u-cat-select,
+.u-sort {
+  padding:8px 11px;
+  border:1px solid #d1cecb;
+  border-radius:6px;
+  font-size:14px;
+  background:white;
+}
+
+@media(max-width:600px) {
+  .u-filter-bar {
+    flex-wrap:wrap;
+  }
+  .u-search {
+    width:100%;
+  }
+}
+
+/* SECTION ------------------------------------------------ */
+
+.u-section {
+  margin-top:30px;
+}
+
+.u-sec-title {
+  font-size:18px;
+  font-weight:600;
+  margin-bottom:14px;
+  color:#3b3b3b;
+}
+
+/* PRODUCT GRID ------------------------------------------- */
+
+.u-grid {
+  display:grid;
+  grid-template-columns:repeat(auto-fill, minmax(180px, 1fr));
+  gap:18px;
+  padding-bottom:30px;
+}
+
+/* PRODUCT CARD ------------------------------------------- */
+
+.u-card {
+  background:white;
+  border-radius:12px;
+  box-shadow:0 2px 6px rgba(0,0,0,0.08);
+  padding:12px;
+  cursor:pointer;
+  transition:transform .14s ease, box-shadow .14s ease;
+}
+
+.u-card:hover {
+  transform:translateY(-3px);
+  box-shadow:0 5px 10px rgba(0,0,0,0.12);
+}
+
+.u-card-pop {
+  border:1px solid #dfd1bf;
+}
+
+.u-img {
+  width:100%;
+  height:190px;
+  object-fit:cover;
+  border-radius:4px;
+  margin-bottom:10px;
+}
+
+.u-title {
+  font-size:14px;
+  font-weight:500;
+  margin-bottom:4px;
+  color:#333;
+  line-height:1.2;
+}
+
+.u-price {
+  color:#5a3f2e;
+  font-weight:600;
+  font-size:15px;
+}
+
+/* MODAL --------------------------------------------------- */
+
+.hidden { display:none !important; }
+
+#u-backdrop {
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.45);
+  z-index:40;
+}
+
+#u-modal {
+  position:fixed;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  background:white;
+  width:420px;
+  border-radius:12px;
+  z-index:50;
+  display:flex;
+  flex-direction:column;
+  padding:16px;
+  box-shadow:0 4px 12px rgba(0,0,0,0.18);
+}
+
+.u-modal-img {
+  width:100%;
+  height:350px;
+  object-fit:cover;
+  border-radius:10px;
+  margin-bottom:14px;
+}
+
+.u-modal-title {
+  font-size:18px;
+  font-weight:600;
+  margin-bottom:6px;
+  color:#333;
+}
+
+.u-modal-price {
+  font-weight:600;
+  font-size:16px;
+  color:#5a3f2e;
+  margin-bottom:16px;
+}
+
+/* MODAL ACTIONS ------------------------------------------ */
+
+.u-modal-actions {
+  display:flex;
+  justify-content:flex-end;
+  gap:10px;
+}
+
+.u-btn-secondary {
+  padding:8px 14px;
+  border:1px solid #ccc;
+  background:white;
+  border-radius:6px;
+  font-size:14px;
+  cursor:pointer;
+}
+
+.u-btn-secondary:hover {
+  background:#eee;
+}
+
+.u-btn-add {
+  padding:8px 16px;
+  background:#8b5e3c;
+  border:none;
+  color:white;
+  border-radius:6px;
+  font-size:14px;
+  cursor:pointer;
+}
+
+.u-btn-add:hover {
+  background:#704b30;
+}
+
+/* RESPONSIVE --------------------------------------------- */
+
+@media (max-width:600px) {
+  .u-container {
+    padding:12px;
+  }
+
+  .u-grid {
+    grid-template-columns:repeat(auto-fill, minmax(140px, 1fr));
+    gap:14px;
+  }
+
+  #u-modal {
+    width:90%;
+  }
 }

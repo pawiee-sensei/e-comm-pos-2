@@ -12,11 +12,36 @@
 
   <section class="u-hero">
     <h1>Welcome to Cafe Market</h1>
-    <p>Relaxing shopping experience. Fresh stock, fast delivery.</p>
+    <p>Fresh goods, cozy browsing, easy checkout.</p>
     <a class="u-btn-hero" href="/products">Browse Products</a>
   </section>
 
+  <!-- POPULAR PRODUCTS -->
+  <section class="u-section">
+    <div class="u-sec-title">Popular Picks</div>
+
+    <div class="u-grid">
+      <% popular.forEach(p => { %>
+        <div class="u-card u-card-pop"
+          data-id="<%= p.id %>"
+          data-name="<%= p.name %>"
+          data-price="<%= p.price %>"
+          data-image="<%= p.image %>"
+        >
+          <% if (p.image) { %>
+            <img src="/public/uploads/products/<%= p.image %>" class="u-img">
+          <% } %>
+          <div class="u-title"><%= p.name %></div>
+          <div class="u-price">₱<%= p.price %></div>
+        </div>
+      <% }) %>
+    </div>
+  </section>
+
 </main>
+<%- include('./modal_product') %>
+
+<script src="/public/js/user/product-modal.js"></script>
 
 </body>
 </html>
