@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Your Cart</title>
+  <link rel="stylesheet" href="/public/css/user.css">
+</head>
+<body>
+
+<%- include('./partials/navbar') %>
+
+<main class="u-container">
+
+  <section class="u-sec-title">Your Cart</section>
+
+  <section id="cart-wrap" class="cart-wrap">
+    <!-- Cart table injected by JS -->
+  </section>
+
+  <section class="cart-footer">
+    <div class="cart-total">
+      <span>Total</span>
+      <strong id="cart-total">₱0.00</strong>
+    </div>
+
+    <a href="/checkout" class="u-btn-add" id="btn-checkout">Proceed to Checkout</a>
+  </section>
+
+</main>
+
+<script src="/public/js/user/cart.js"></script>
+<script src="/public/js/user/cart-badge.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Order Submitted</title>
+  <link rel="stylesheet" href="/public/css/user.css">
+</head>
+<body>
+
+<%- include('./partials/navbar') %>
+
+<main class="u-container">
+
+  <section class="u-hero">
+    <h1>Order Sent Successfully</h1>
+    <p>Your order has been received.</p>
+    <p>The seller will contact you to confirm your order.</p>
+
+    <a href="/products" class="u-btn-hero">Continue Shopping</a>
+  </section>
+
+</main>
+
+<script>
+  localStorage.removeItem('cart');
+</script>
+
+</body>
+</html>

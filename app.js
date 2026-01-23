@@ -85,6 +85,8 @@ app.use('/admin', adminAuthRoutes);
 app.use('/', userAuthRoutes);
 
 app.use('/', require('./routes/user.shop.routes'));
+app.use('/', require('./routes/user.cart.routes'));
+app.use('/', require('./routes/user.checkout.routes'));
 
 // Admin UI shell (Sidebar + Dashboard Panels)
 app.use('/admin', adminUIRoutes);

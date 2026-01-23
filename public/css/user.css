@@ -292,3 +292,190 @@ body {
     width:90%;
   }
 }
+
+/* CART ---------------------------------------------------- */
+
+.cart-wrap {
+  background:white;
+  border-radius:12px;
+  padding:12px;
+  box-shadow:0 2px 6px rgba(0,0,0,0.08);
+}
+
+.cart-empty {
+  padding:40px;
+  text-align:center;
+  color:#666;
+}
+
+.cart-table {
+  width:100%;
+  border-collapse:collapse;
+}
+
+.cart-table th {
+  text-align:left;
+  font-size:13px;
+  color:#666;
+  padding:10px 8px;
+  border-bottom:1px solid #eee;
+}
+
+.cart-table td {
+  padding:12px 8px;
+  border-bottom:1px solid #f0f0f0;
+  font-size:14px;
+}
+
+.qty-ctrl {
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+.qty-ctrl button {
+  width:26px;
+  height:26px;
+  border-radius:50%;
+  border:1px solid #ccc;
+  background:white;
+  cursor:pointer;
+}
+
+.qty-ctrl span {
+  min-width:20px;
+  text-align:center;
+}
+
+.cart-remove {
+  background:none;
+  border:none;
+  color:#b91c1c;
+  cursor:pointer;
+}
+
+.cart-footer {
+  margin-top:18px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.cart-total {
+  font-size:16px;
+}
+
+/* ============================
+   CHECKOUT — HARD FIX
+============================ */
+
+.checkout-page {
+  min-height: calc(100vh - 120px);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: 40px;
+  padding-bottom: 60px;
+  background: transparent;
+}
+
+/* kill any inherited styling */
+.checkout-page * {
+  box-sizing: border-box;
+}
+
+/* main card */
+.checkout-box {
+  width: 100%;
+  max-width: 520px;
+  background: #ffffff;
+  padding: 40px;
+  border-radius: 16px;
+  box-shadow: 0 10px 28px rgba(0,0,0,0.08);
+  border: none;
+  margin: 0;
+}
+
+/* remove any nested shadows */
+.checkout-box .checkout-box {
+  box-shadow: none !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+}
+
+/* title */
+.checkout-box h2 {
+  margin: 0 0 18px 0;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+/* labels */
+.checkout-box label {
+  display: block;
+  margin-top: 14px;
+  margin-bottom: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #444;
+}
+
+/* inputs */
+.checkout-box input,
+.checkout-box textarea,
+.checkout-box select {
+  width: 100%;
+  padding: 8px 40px;
+  border: 1px solid #d6d6d6;
+  border-radius: 8px;
+  font-size: 14px;
+  background: #fff;
+  outline: none;
+}
+
+/* focus */
+.checkout-box input:focus,
+.checkout-box textarea:focus,
+.checkout-box select:focus {
+  border-color: #8b5e3c;
+}
+
+/* textarea */
+.checkout-box textarea {
+  min-height: 90px;
+  resize: vertical;
+}
+
+/* gcash section */
+#gcash-box {
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px solid #eee;
+}
+
+/* button */
+.u-btn-add.full {
+  width: 100%;
+  margin-top: 22px;
+  padding: 14px;
+  font-size: 15px;
+  font-weight: 600;
+  background: #8b5e3c;
+  border-radius: 10px;
+  border: none;
+  color: white;
+  cursor: pointer;
+}
+
+.u-btn-add.full:hover {
+  background: #704b30;
+}
+
+/* mobile */
+@media (max-width:600px){
+  .checkout-box{
+    margin:0 14px;
+    padding:20px;
+  }
+}

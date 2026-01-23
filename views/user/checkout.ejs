@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Checkout</title>
+  <link rel="stylesheet" href="/public/css/user.css">
+</head>
+<body>
+
+<%- include('./partials/navbar') %>
+
+<main class="u-container">
+
+  <section class="u-sec-title">Checkout</section>
+
+ <div class="checkout-page">
+  <form method="POST" enctype="multipart/form-data">
+    <div class="checkout-box">
+
+
+    <div class="checkout-box">
+      <label>Name</label>
+      <input type="text" name="name" required>
+
+      <label>Phone Number</label>
+      <input type="text" name="phone" required>
+
+      <label>Address</label>
+      <textarea name="address" rows="3" required></textarea>
+
+      <label>Payment Method</label>
+      <select name="payment_mode" id="payment_mode" required>
+        <option value="COD">Cash on Delivery</option>
+        <option value="GCASH">GCash (Prepaid)</option>
+      </select>
+
+      <!-- GCash Section -->
+      <div id="gcash-box" class="hidden">
+        <label>GCash Reference Number</label>
+        <input type="text" name="reference_no">
+
+        <label>Upload GCash Receipt</label>
+        <input type="file" name="gcash_receipt" accept="image/*">
+      </div>
+
+      <input type="hidden" name="cart_json" id="cart_json">
+
+      <button type="submit" class="u-btn-add full">Place Order</button>
+    </div>
+
+  </form>
+
+</main>
+
+<script src="/public/js/user/checkout.js"></script>
+<script src="/public/js/user/cart-badge.js"></script>
+
+</body>
+</html>
