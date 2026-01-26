@@ -104,6 +104,9 @@ app.use('/admin', require('./routes/admin.product.update.routes'));
 
 app.use('/admin', require('./routes/admin.product.logs.routes'));
 
+app.use('/admin', require('./routes/admin.orders.routes'));
+
+
 
 
 

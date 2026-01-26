@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Orders</title>
+  <link rel="stylesheet" href="/public/css/admin.css">
+</head>
+<body>
+
+<%- include('../sidebar') %>
+
+<main id="panel-container">
+
+  <!-- HEADER -->
+  <div class="admin-page-header">
+    <h1>Orders</h1>
+
+    <div class="admin-search">
+      <input
+        type="text"
+        id="orderSearch"
+        placeholder="Search name or phone"
+        value="<%= q %>">
+    </div>
+  </div>
+
+  <!-- PENDING ORDERS -->
+  <div class="admin-card">
+    <h3>Pending Orders</h3>
+
+    <% if (!pending.length) { %>
+      <p class="muted">No pending orders</p>
+    <% } else { %>
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>Customer</th>
+            <th>Phone</th>
+            <th>Payment</th>
+            <th>Total</th>
+            <th>Date</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% pending.forEach(o => { %>
+            <tr>
+              <td><strong><%= o.customer_name %></strong></td>
+              <td><%= o.phone %></td>
+              <td><%= o.payment_mode %></td>
+              <td>₱<%= o.total %></td>
+              <td><%= o.created_at.toLocaleString() %></td>
+              <td>
+                <a href="/admin/orders/<%= o.id %>" class="btn-small edit">
+                  Review
+                </a>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+
+      <% if (pendingPages > 1) { %>
+        <div class="pagination">
+          <% for (let i = 1; i <= pendingPages; i++) { %>
+            <a
+              href="?pending_page=<%= i %>&page=<%= page %>&q=<%= q %>"
+              class="pg <%= i === pendingPage ? 'active' : '' %>">
+              <%= i %>
+            </a>
+          <% } %>
+        </div>
+      <% } %>
+    <% } %>
+  </div>
+
+  <!-- ORDER HISTORY -->
+  <div class="admin-card" style="margin-top:32px;">
+    <h3>Order History</h3>
+
+    <% if (!history.length) { %>
+      <p class="muted">No order history</p>
+    <% } else { %>
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>Customer</th>
+            <th>Status</th>
+            <th>Total</th>
+            <th>Date</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% history.forEach(o => { %>
+            <tr>
+              <td><%= o.customer_name %></td>
+              <td>
+                <span class="badge <%= o.status %>">
+                  <%= o.status %>
+                </span>
+              </td>
+              <td>₱<%= o.total %></td>
+              <td><%= o.created_at.toLocaleString() %></td>
+              <td>
+                <a href="/admin/orders/<%= o.id %>" class="btn-small">
+                  View
+                </a>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+
+      <% if (pages > 1) { %>
+        <div class="pagination">
+          <% for (let i = 1; i <= pages; i++) { %>
+            <a
+              href="?page=<%= i %>&pending_page=<%= pendingPage %>&q=<%= q %>"
+              class="pg <%= i === page ? 'active' : '' %>">
+              <%= i %>
+            </a>
+          <% } %>
+        </div>
+      <% } %>
+    <% } %>
+  </div>
+
+</main>
+
+<script src="/public/js/admin.js"></script>
+
+<script>
+  const search = document.getElementById('orderSearch');
+  let t;
+  search.addEventListener('input', () => {
+    clearTimeout(t);
+    t = setTimeout(() => {
+      window.location = `?q=${encodeURIComponent(search.value)}`;
+    }, 350);
+  });
+</script>
+
+</body>
+</html>
