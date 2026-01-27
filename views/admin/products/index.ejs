@@ -1,208 +1,238 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Products</title>
-  <link rel="stylesheet" href="/public/css/admin.css">
-  <link rel="stylesheet" href="/public/css/products/products.css">
-</head>
-<body>
+  <!DOCTYPE html>
+  <html>
+  <head>
+    <title>Products</title>
+    <link rel="stylesheet" href="/public/css/admin.css">
+    <link rel="stylesheet" href="/public/css/products/products.css">
+  </head>
+  <body>
 
-<!-- SIDEBAR -->
-<%- include('../sidebar') %>
+  <!-- SIDEBAR -->
+  <%- include('../sidebar') %>
 
-<!-- MAIN PANEL -->
-<main id="panel-container">
+  <!-- MAIN PANEL -->
+  <main id="panel-container">
 
-  <!-- HEADER -->
-  <section class="prod-header">
-    <h1>Product Inventory</h1>
-    <button id="btnAddProduct" class="btn-primary" type="button">+ Add Product</button>
-  </section>
+    <!-- HEADER -->
+    <section class="prod-header">
+      <h1>Product Inventory</h1>
+      <button id="btnAddProduct" class="btn-primary" type="button">+ Add Product</button>
+    </section>
 
-  <!-- METRICS -->
-  <section class="metrics-bar">
-    <div class="metric">
-      <div class="m-title">Total</div>
-      <div class="m-value"><%= metrics.total %></div>
+    <!-- METRICS -->
+    <section class="metrics-bar">
+      <div class="metric">
+        <div class="m-title">Total</div>
+        <div class="m-value"><%= metrics.total %></div>
+      </div>
+      <div class="metric">
+        <div class="m-title">Low Stock</div>
+        <div class="m-value"><%= metrics.low %></div>
+      </div>
+      <div class="metric">
+        <div class="m-title">Out of Stock</div>
+        <div class="m-value"><%= metrics.out %></div>
+      </div>
+      <div class="metric">
+        <div class="m-title">Healthy</div>
+        <div class="m-value"><%= metrics.healthy %></div>
+      </div>
+    </section>
+
+    <!-- FILTER BAR -->
+    <section class="prod-filters">
+      <form method="GET" class="filters">
+        <input type="text" name="search" value="<%= search %>" placeholder="Search products…" class="input">
+
+        <select name="category_id" class="select">
+          <option value="">All Categories</option>
+          <% categories.forEach(c => { %>
+            <option value="<%= c.id %>" <%= category_id == c.id ? 'selected' : '' %>><%= c.name %></option>
+          <% }) %>
+        </select>
+
+        <button class="btn-secondary" type="submit">Apply</button>
+      </form>
+    </section>
+
+    <!-- TABLE -->
+    <section class="prod-table">
+      <table>
+        <thead>
+          <tr>
+            <th>Image</th>
+            <th>Product</th>
+            <th>Category</th>
+            <th>Stock</th>
+            <th>Price</th>
+            <th>Status</th>
+            <th class="action-col"></th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <% products.forEach(p => { %>
+            <tr data-id="<%= p.id %>">
+
+              <td>
+                <% if (p.image && p.image !== 'null') { %>
+                  <img src="/public/uploads/products/<%= p.image %>" class="p-img">
+                <% } else { %>
+                  <div class="no-img">No Image</div>
+                <% } %>
+              </td>
+
+              <td class="p-name"><%= p.name %></td>
+              <td><%= p.category_name %></td>
+
+              <!-- LIVE UPDATE HOOK -->
+              <td class="td-stock"><%= p.stock %></td>
+
+              <td>₱<%= p.price %></td>
+
+              <!-- LIVE UPDATE STATUS -->
+              <td class="td-status">
+                <% if (p.stock == 0) { %>
+                  <span class="status out">OUT</span>
+                <% } else if (p.stock <= 5) { %>
+                  <span class="status low">LOW</span>
+                <% } else if (p.stock <= 20) { %>
+                  <span class="status med">MED</span>
+                <% } else { %>
+                  <span class="status good">GOOD</span>
+                <% } %>
+              </td>
+
+              <td class="actions">
+                <button 
+                  class="btn-small stock btn-adjust"
+                  data-id="<%= p.id %>"
+                  data-name="<%= p.name %>"
+                >Adjust Stock</button>
+
+                <button
+                  class="btn-small edit btn-edit"
+                  data-id="<%= p.id %>"
+                  data-name="<%= p.name %>"
+                  data-price="<%= p.price %>"
+                  data-stock="<%= p.stock %>"
+                  data-category="<%= p.category_id !== null ? p.category_id : '' %>"
+                  data-image="<%= p.image %>"
+                >Edit</button>
+
+                <form method="POST" action="/admin/products/delete/<%= p.id %>" class="inline">
+                  <button class="btn-small danger">Delete</button>
+                </form>
+              </td>
+
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- PRODUCT PAGINATION -->
+    <% if (pages && pages > 1) { %>
+    <div class="pagination">
+      <% for (let i = 1; i <= pages; i++) { %>
+        <a href="?page=<%= i %>&logpage=<%= logPage %>"
+   class="pg <%= i === page ? 'active' : '' %>">
+        </a>
+      <% } %>
     </div>
-    <div class="metric">
-      <div class="m-title">Low Stock</div>
-      <div class="m-value"><%= metrics.low %></div>
-    </div>
-    <div class="metric">
-      <div class="m-title">Out of Stock</div>
-      <div class="m-value"><%= metrics.out %></div>
-    </div>
-    <div class="metric">
-      <div class="m-title">Healthy</div>
-      <div class="m-value"><%= metrics.healthy %></div>
-    </div>
-  </section>
+    <% } %>
 
-  <!-- FILTER BAR -->
-  <section class="prod-filters">
-    <form method="GET" class="filters">
-      <input type="text" name="search" value="<%= search %>" placeholder="Search products…" class="input">
+    <!-- =========================================== -->
+    <!-- STOCK LOG -->
+    <!-- =========================================== -->
 
-      <select name="category_id" class="select">
-        <option value="">All Categories</option>
-        <% categories.forEach(c => { %>
-          <option value="<%= c.id %>" <%= category_id == c.id ? 'selected' : '' %>><%= c.name %></option>
-        <% }) %>
-      </select>
+  <section class="panel panel-logs">
+    <h2 class="panel-title">Stock Log</h2>
 
-      <button class="btn-secondary" type="submit">Apply</button>
-    </form>
-  </section>
+    <% const _logs = Array.isArray(logs) ? logs : []; %>
 
-  <!-- TABLE -->
-  <section class="prod-table">
-    <table>
+    <table class="log-table">
       <thead>
-        <tr>
-          <th>Image</th>
-          <th>Product</th>
-          <th>Category</th>
-          <th>Stock</th>
-          <th>Price</th>
-          <th>Status</th>
-          <th class="action-col"></th>
-        </tr>
-      </thead>
+    <tr>
+      <th>Date</th>
+      <th>Image</th>
+      <th>Product</th>
+      <th>Action</th>
+      <th>Qty</th>
+      <th>Stock</th>
+      <th>Reason</th>
+    </tr>
+  </thead>
+
 
       <tbody>
-        <% products.forEach(p => { %>
-          <tr data-id="<%= p.id %>">
+  <% if (_logs.length === 0) { %>
+    <tr>
+      <td colspan="7" style="text-align:center;color:#6b7280">
+        No activity yet
+      </td>
+    </tr>
+  <% } else { %>
+    <% _logs.forEach(l => { %>
+      <tr>
+        <td><%= new Date(l.created_at).toLocaleString() %></td>
 
-            <td>
-              <% if (p.image && p.image !== 'null') { %>
-                <img src="/public/uploads/products/<%= p.image %>" class="p-img">
-              <% } else { %>
-                <div class="no-img">No Image</div>
-              <% } %>
-            </td>
+        <td>
+          <% if (l.product_image) { %>
+            <img
+              src="/public/uploads/products/<%= l.product_image %>"
+              class="log-img"
+              alt="<%= l.product_name %>"
+            >
+          <% } else { %>
+            <span class="log-img-placeholder">—</span>
+          <% } %>
+        </td>
 
-            <td class="p-name"><%= p.name %></td>
-            <td><%= p.category_name %></td>
+        <td class="log-product-name">
+          <%= l.product_name %>
+        </td>
 
-            <!-- LIVE UPDATE HOOK -->
-            <td class="td-stock"><%= p.stock %></td>
+        <td>
+          <span class="log-badge log-<%= l.action %>">
+            <%= l.action.toUpperCase() %>
+          </span>
+        </td>
 
-            <td>₱<%= p.price %></td>
+        <td><%= l.qty ?? '-' %></td>
 
-            <!-- LIVE UPDATE STATUS -->
-            <td class="td-status">
-              <% if (p.stock == 0) { %>
-                <span class="status out">OUT</span>
-              <% } else if (p.stock <= 5) { %>
-                <span class="status low">LOW</span>
-              <% } else if (p.stock <= 20) { %>
-                <span class="status med">MED</span>
-              <% } else { %>
-                <span class="status good">GOOD</span>
-              <% } %>
-            </td>
+        <td>
+          <%= l.prev_stock ?? '-' %> → <%= l.new_stock ?? '-' %>
+        </td>
 
-            <td class="actions">
-              <button 
-                class="btn-small stock btn-adjust"
-                data-id="<%= p.id %>"
-                data-name="<%= p.name %>"
-              >Adjust Stock</button>
+        <td><%= l.reason || '-' %></td>
+      </tr>
+    <% }) %>
+  <% } %>
+</tbody>
 
-              <button
-                class="btn-small edit btn-edit"
-                data-id="<%= p.id %>"
-                data-name="<%= p.name %>"
-                data-price="<%= p.price %>"
-                data-stock="<%= p.stock %>"
-                data-category="<%= p.category_id !== null ? p.category_id : '' %>"
-                data-image="<%= p.image %>"
-              >Edit</button>
-
-              <form method="POST" action="/admin/products/delete/<%= p.id %>" class="inline">
-                <button class="btn-small danger">Delete</button>
-              </form>
-            </td>
-
-          </tr>
-        <% }) %>
-      </tbody>
     </table>
+<!-- STOCK LOG PAGINATION -->
+<% if (logPages > 1) { %>
+  <div class="pagination">
+    <% for (let i = 1; i <= logPages; i++) { %>
+      <a
+        href="?page=<%= page %>&logpage=<%= i %>"
+        class="pg <%= i === logPage ? 'active' : '' %>">
+        <%= i %>
+      </a>
+    <% } %>
+  </div>
+<% } %>
+
+
   </section>
 
-  <!-- PRODUCT PAGINATION -->
-  <% if (pages && pages > 1) { %>
-  <div class="pagination">
-    <% for (let i = 1; i <= pages; i++) { %>
-      <a href="?page=<%= i %>" 
-         class="pg <%= i === page ? 'active' : '' %>">
-         <%= i %>
-      </a>
-    <% } %>
-  </div>
-  <% } %>
-
+  
+  <!-- ACTIVITY LOG -->
   <!-- =========================================== -->
-  <!-- STOCK LOG -->
-  <!-- =========================================== -->
-
-<section class="panel panel-logs">
-  <h2 class="panel-title">Stock Log</h2>
-
-  <% const _logs = Array.isArray(logs) ? logs : []; %>
-
-  <table class="log-table">
-    <thead>
-      <tr>
-        <th>Date</th>
-        <th>Product</th>
-        <th>Action</th>
-        <th>Qty</th>
-        <th>Stock</th>
-        <th>Reason</th>
-      </tr>
-    </thead>
-
-    <tbody>
-      <% if (_logs.length === 0) { %>
-        <tr>
-          <td colspan="6" style="text-align:center;color:#6b7280">No activity yet</td>
-        </tr>
-      <% } else { %>
-        <% _logs.forEach(l => { %>
-          <tr>
-            <td><%= new Date(l.created_at).toLocaleString() %></td>
-            <td style="display:flex;align-items:center;gap:6px;">
-              <% if (l.product_image) { %>
-                <img src="/public/uploads/products/<%= l.product_image %>" class="log-img">
-              <% } %>
-              <%= l.product_name %>
-            </td>
-            <td><%= l.action %></td>
-            <td><%= l.qty ?? '-' %></td>
-            <td><%= l.prev_stock ?? '-' %> → <%= l.new_stock ?? '-' %></td>
-            <td><%= l.reason || '-' %></td>
-          </tr>
-        <% }) %>
-      <% } %>
-    </tbody>
-  </table>
-
-  <!-- STOCK LOG PAGINATION -->
-  <% if (typeof logPages !== 'undefined' && logPages > 1) { %>
-  <div class="pagination" style="margin-top:10px;">
-    <% for (let i = 1; i <= logPages; i++) { %>
-      <a href="?logpage=<%= i %>" 
-         class="pg <%= i === logPage ? 'active' : '' %>">
-         <%= i %>
-      </a>
-    <% } %>
-  </div>
-  <% } %>
-</section>
-
 <!-- ACTIVITY LOG -->
+<!-- =========================================== -->
 <section class="panel panel-logs">
   <h2 class="panel-title">Activity Log</h2>
 
@@ -220,31 +250,58 @@
           <th>Details</th>
         </tr>
       </thead>
+
       <tbody>
         <% _activity.forEach(a => { %>
           <tr>
             <td><%= new Date(a.created_at).toLocaleString() %></td>
-            <td><%= a.product_name || '(deleted)' %></td>
-            <td><%= a.action.toUpperCase() %></td>
-            <td><%= a.details || '-' %></td>
+
+            <td>
+              <%= a.product_name || '(deleted)' %>
+            </td>
+
+            <td>
+              <span class="log-badge log-<%= a.action %>">
+                <%= a.action.toUpperCase() %>
+              </span>
+            </td>
+
+            <td>
+              <%= a.details || '-' %>
+            </td>
           </tr>
         <% }) %>
       </tbody>
     </table>
   <% } %>
+
+  <!-- ACTIVITY LOG PAGINATION -->
+  <% if (activityPages && activityPages > 1) { %>
+    <div class="pagination">
+      <% for (let i = 1; i <= activityPages; i++) { %>
+        <a
+          href="?page=<%= page %>&logpage=<%= logPage %>&activitypage=<%= i %>"
+          class="pg <%= i === activityPage ? 'active' : '' %>">
+          <%= i %>
+        </a>
+      <% } %>
+    </div>
+  <% } %>
 </section>
 
-</main>
 
-<!-- MODALS -->
-<%- include('_modal_adjust') %>
-<%- include('_modal_add') %>
-<%- include('_modal_edit') %>
 
-<!-- JS -->
-<script src="/public/js/products/products.js"></script>
+  </main>
 
-<div id="modal-backdrop" class="modal-backdrop hidden"></div>
+  <!-- MODALS -->
+  <%- include('_modal_adjust') %>
+  <%- include('_modal_add') %>
+  <%- include('_modal_edit') %>
 
-</body>
-</html>
+  <!-- JS -->
+  <script src="/public/js/products/products.js"></script>
+
+  <div id="modal-backdrop" class="modal-backdrop hidden"></div>
+
+  </body>
+  </html>

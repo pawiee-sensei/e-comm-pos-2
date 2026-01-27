@@ -31,7 +31,7 @@ exports.index = async (req, res) => {
 
   // STOCK LOG PAGINATION
   const logPage = parseInt(req.query.logpage || 1);
-  const logLimit = 20;
+  const logLimit = 10;
   const logOffset = (logPage - 1) * logLimit;
 
   const [stockRows] = await db.query(`
@@ -48,28 +48,48 @@ exports.index = async (req, res) => {
 
   const logPages = Math.ceil(totalLogs / logLimit);
 
-  // ACTIVITY LOG (LATEST 20)
-  const [activityRows] = await db.query(`
-    SELECT a.*, p.name AS product_name
-    FROM products_activity_logs a
-    LEFT JOIN products p ON p.id = a.product_id
-    ORDER BY a.id DESC
-    LIMIT 20
-  `);
+  // ACTIVITY LOG PAGINATION
+const activityPage = parseInt(req.query.activitypage || 1);
+const activityLimit = 10;
+const activityOffset = (activityPage - 1) * activityLimit;
 
-  res.render('admin/products/index', {
-    products,
-    categories,
-    search,
-    category_id,
-    page,
-    pages: Math.ceil(total / limit),
-    metrics,
-    logs: stockRows || [],
-    logPage,
-    logPages,
-    activityLogs: activityRows || []
-  });
+const [activityRows] = await db.query(`
+  SELECT a.*, p.name AS product_name
+  FROM products_activity_logs a
+  LEFT JOIN products p ON p.id = a.product_id
+  ORDER BY a.id DESC
+  LIMIT ? OFFSET ?
+`, [activityLimit, activityOffset]);
+
+const [[{ totalActivity }]] = await db.query(`
+  SELECT COUNT(*) AS totalActivity FROM products_activity_logs
+`);
+
+const activityPages = Math.ceil(totalActivity / activityLimit);
+
+res.render('admin/products/index', {
+  products,
+  categories,
+  search,
+  category_id,
+
+  // PRODUCT PAGINATION
+  page,
+  pages: Math.ceil(total / limit),
+
+  // METRICS
+  metrics,
+
+  // STOCK LOG PAGINATION
+  logs: stockRows || [],
+  logPage,
+  logPages,
+
+  // ACTIVITY LOG PAGINATION  ← ADD THESE
+  activityLogs: activityRows || [],
+  activityPage,
+  activityPages
+});
 };
 
 

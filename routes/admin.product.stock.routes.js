@@ -1,7 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const c = require('../controllers/admin.product.stock.controller');
 
-router.post('/ajax/stock-adjust', c.adjustAjax);
+const stockController = require('../controllers/admin.product.stock.controller');
+
+router.post('/ajax/stock-adjust', stockController.adjustAjax);
 
 module.exports = router;
