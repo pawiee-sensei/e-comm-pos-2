@@ -1,0 +1,142 @@
+/* DAILY SUMMARY */
+.pos-summary {
+  display:grid;
+  grid-template-columns: repeat(4,1fr);
+  gap:16px;
+  margin-bottom:24px;
+}
+
+.sum-card {
+  background:white;
+  padding:14px;
+  border-radius:10px;
+  border:1px solid #e5e7eb;
+}
+
+.sum-title {
+  font-size:12px;
+  color:#6b7280;
+  margin-bottom:6px;
+}
+
+.sum-value {
+  font-size:18px;
+  font-weight:600;
+}
+
+/* LAYOUT */
+.pos-layout {
+  display:grid;
+  grid-template-columns: 2fr 1fr;
+  gap:24px;
+}
+
+/* PRODUCTS */
+.pos-products input {
+  width:100%;
+  padding:8px;
+  margin-bottom:12px;
+}
+
+.pos-grid {
+  display:grid;
+  grid-template-columns: repeat(auto-fill,minmax(140px,1fr));
+  gap:12px;
+}
+
+.pos-card {
+  background:white;
+  padding:12px;
+  border-radius:8px;
+  cursor:pointer;
+  border:1px solid #e5e7eb;
+}
+
+.pos-card:hover {
+  background:#f9fafb;
+}
+
+/* CART */
+.pos-cart {
+  background:white;
+  padding:16px;
+  border-radius:10px;
+  border:1px solid #e5e7eb;
+}
+
+.cart-row {
+  display:flex;
+  justify-content:space-between;
+  margin-bottom:8px;
+}
+
+.pos-total {
+  margin-top:12px;
+  font-weight:600;
+}
+
+/* PAYMENT SELECT */
+.pos-select {
+  width:100%;
+  margin-top:12px;
+  padding:10px;
+  border-radius:8px;
+  border:1px solid #d1d5db;
+  font-size:14px;
+  background:white;
+}
+
+/* COMPLETE SALE BUTTON */
+.btn-complete {
+  width:100%;
+  margin-top:14px;
+  padding:12px;
+  border-radius:10px;
+  background:#16a34a;
+  color:white;
+  font-size:15px;
+  font-weight:600;
+  border:none;
+  cursor:pointer;
+}
+
+.btn-complete:hover {
+  background:#15803d;
+}
+
+/* ================================
+   POS CART CONTROLS (ADMIN)
+================================ */
+
+.pos-controls {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 16px;
+}
+
+/* Payment select */
+.pos-payment {
+  min-width: 160px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid #d1d5db;
+  font-size: 14px;
+  background: white;
+}
+
+/* Complete sale button */
+.btn-complete-sale {
+  padding: 10px 18px;
+  border-radius: 8px;
+  border: none;
+  font-size: 14px;
+  font-weight: 600;
+  background: #16a34a; /* green */
+  color: white;
+  cursor: pointer;
+}
+
+.btn-complete-sale:hover {
+  background: #15803d;
+}

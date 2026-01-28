@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>POS</title>
+  <link rel="stylesheet" href="/public/css/admin.css">
+  <link rel="stylesheet" href="/public/css/admin.pos.css">
+</head>
+<body>
+
+<%- include('../sidebar') %>
+
+<main id="panel-container" class="pos-layout">
+
+  <!-- DAILY SUMMARY -->
+  <section class="pos-summary">
+    <div class="sum-card">
+      <div class="sum-title">Transactions</div>
+      <div class="sum-value"><%= summary.transactions || 0 %></div>
+    </div>
+    <div class="sum-card">
+      <div class="sum-title">Total Sales</div>
+      <div class="sum-value">₱<%= summary.total_sales || 0 %></div>
+    </div>
+    <div class="sum-card">
+      <div class="sum-title">Cash</div>
+      <div class="sum-value">₱<%= summary.cash_total || 0 %></div>
+    </div>
+    <div class="sum-card">
+      <div class="sum-title">GCash</div>
+      <div class="sum-value">₱<%= summary.gcash_total || 0 %></div>
+    </div>
+  </section>
+
+  <!-- PRODUCTS -->
+  <section class="pos-products">
+    <h2>Products</h2>
+    <input id="pos-search" placeholder="Search product">
+
+    <div class="pos-grid">
+      <% products.forEach(p => { %>
+        <div class="pos-card"
+          data-id="<%= p.id %>"
+          data-name="<%= p.name %>"
+          data-price="<%= p.price %>">
+          <div class="pos-name"><%= p.name %></div>
+          <div class="pos-price">₱<%= p.price %></div>
+          <div class="pos-stock">Stock: <%= p.stock %></div>
+        </div>
+      <% }) %>
+    </div>
+  </section>
+
+  <!-- CART -->
+  <section class="pos-cart">
+    <h2>Cart</h2>
+
+    <div id="cart-items"></div>
+
+    <div class="pos-total">
+      Total: ₱<span id="cart-total">0</span>
+    </div>
+
+    <div class="pos-controls">
+  <select name="payment_mode" class="pos-payment">
+    <option value="cash">Cash</option>
+    <option value="gcash">GCash</option>
+  </select>
+
+  <button class="btn-complete-sale" type="submit">
+    Complete Sale
+  </button>
+</div>
+  </section>
+
+</main>
+
+<script src="/public/js/admin.pos.js"></script>
+</body>
+</html>
