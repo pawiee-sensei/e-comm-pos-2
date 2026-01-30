@@ -10,8 +10,10 @@
 
 <main id="panel-container">
 
+  <!-- HEADER -->
   <div class="admin-page-header">
     <h1>Order #<%= order.id %></h1>
+
     <span class="badge <%= order.status %>">
       <%= order.status %>
     </span>
@@ -22,31 +24,64 @@
     <!-- CUSTOMER -->
     <div class="order-box">
       <h3>Customer Information</h3>
-      <p><strong>Name:</strong> <%= order.customer_name %></p>
-      <p><strong>Phone:</strong> <%= order.phone %></p>
-      <p><strong>Address:</strong><br><%= order.address %></p>
+
+      <% if (order.source === 'POS') { %>
+        <p><strong>Customer:</strong> POS Walk-in</p>
+        <p class="muted">No customer details required for POS sales</p>
+      <% } else { %>
+        <p><strong>Name:</strong> <%= order.customer_name %></p>
+        <p><strong>Phone:</strong> <%= order.phone %></p>
+        <p><strong>Address:</strong> <%= order.address %></p>
+      <% } %>
     </div>
 
     <!-- PAYMENT -->
     <div class="order-box">
       <h3>Payment</h3>
-      <p><strong>Method:</strong> <%= order.payment_mode %></p>
-      <p><strong>Status:</strong> <%= order.payment_status %></p>
 
-      <% if (payment && payment.receipt_image) { %>
-        <img
-          src="/public/uploads/payments/<%= payment.receipt_image %>"
-          class="receipt-img">
-      <% } else { %>
-        <p style="color:#777;">No receipt uploaded</p>
+      <!-- METHOD -->
+      <p>
+  <strong>Method:</strong>
+  <% if (order.source === 'POS') { %>
+    <%= (order.payment_mode || 'cash').toUpperCase() %>
+  <% } else { %>
+    <%= order.payment_mode.toUpperCase() %>
+  <% } %>
+</p>
+
+      <!-- STATUS -->
+      <p>
+        <p>
+        <strong>Status:</strong>
+
+        <% if (order.payment_status === 'paid') { %>
+          <span class="badge confirmed">PAID</span>
+        <% } else if (order.payment_status === 'pending_verification') { %>
+          <span class="badge pending">VERIFYING</span>
+        <% } else { %>
+          <span class="badge cancelled">UNPAID</span>
+        <% } %>
+      </p>
+
+
+      <!-- RECEIPT (ONLINE ONLY) -->
+      <% if (order.source !== 'POS') { %>
+        <% if (payment && payment.receipt_image) { %>
+          <img
+            src="/public/uploads/payments/<%= payment.receipt_image %>"
+            class="receipt-img">
+        <% } else { %>
+          <p class="muted">No receipt uploaded</p>
+        <% } %>
       <% } %>
     </div>
 
   </div>
 
-  <!-- ITEMS -->
+  <!-- ORDER ITEMS -->
   <div class="order-box" style="margin-top:20px;">
     <h3>Order Items</h3>
+
     <table class="admin-table">
       <thead>
         <tr>
@@ -61,25 +96,25 @@
           <tr>
             <td><%= i.name %></td>
             <td><%= i.qty %></td>
-            <td>₱<%= i.price %></td>
-            <td>₱<%= i.subtotal %></td>
+            <td>₱<%= Number(i.price).toFixed(2) %></td>
+            <td>₱<%= (Number(i.price) * i.qty).toFixed(2) %></td>
           </tr>
         <% }) %>
       </tbody>
     </table>
   </div>
 
-  <!-- ACTIONS -->
-  <% if (order.status === 'pending') { %>
-  <div class="order-actions">
-    <form method="POST" action="/admin/orders/<%= order.id %>/confirm">
-      <button class="btn-primary">Confirm Order</button>
-    </form>
+  <!-- ACTIONS (ONLINE ONLY) -->
+  <% if (order.status === 'pending' && order.source !== 'POS') { %>
+    <div class="order-actions">
+      <form method="POST" action="/admin/orders/<%= order.id %>/confirm">
+        <button class="btn-primary">Confirm Order</button>
+      </form>
 
-    <form method="POST" action="/admin/orders/<%= order.id %>/cancel">
-      <button class="btn-small danger">Cancel</button>
-    </form>
-  </div>
+      <form method="POST" action="/admin/orders/<%= order.id %>/cancel">
+        <button class="btn-small danger">Cancel</button>
+      </form>
+    </div>
   <% } %>
 
 </main>

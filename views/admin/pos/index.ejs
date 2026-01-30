@@ -50,27 +50,34 @@
     </div>
   </section>
 
+
   <!-- CART -->
-  <section class="pos-cart">
-    <h2>Cart</h2>
+<section class="pos-cart">
+  <h2>Cart</h2>
 
-    <div id="cart-items"></div>
+  <!-- Cart items will be injected by JS -->
+  <div id="cart-items"></div>
 
-    <div class="pos-total">
-      Total: ₱<span id="cart-total">0</span>
-    </div>
+  <div class="pos-total">
+    Total: ₱<span id="cart-total">0</span>
+  </div>
 
-    <div class="pos-controls">
-  <select name="payment_mode" class="pos-payment">
-    <option value="cash">Cash</option>
-    <option value="gcash">GCash</option>
-  </select>
+  <div class="pos-controls">
+    <select name="payment_mode" id="payment-mode" class="pos-payment">
+      <option value="cash">Cash</option>
+      <option value="gcash">GCash</option>
+    </select>
 
-  <button class="btn-complete-sale" type="submit">
-    Complete Sale
-  </button>
-</div>
-  </section>
+    <button
+      type="button"
+      class="btn-complete-sale"
+      id="btn-complete-sale"
+    >
+      Complete Sale
+    </button>
+  </div>
+</section>
+
 
 </main>
 

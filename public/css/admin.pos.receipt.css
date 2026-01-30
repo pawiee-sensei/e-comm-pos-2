@@ -1,0 +1,222 @@
+/* === HARD OVERRIDE ADMIN LAYOUT === */
+html, body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* kill admin panel offset */
+#panel-container,
+.sidebar {
+  display: none !important;
+}
+
+
+/* FULL RESET FOR RECEIPT PAGE */
+body {
+  margin: 0;
+  padding: 0;
+}
+
+/* OVERRIDE ADMIN LAYOUT OFFSET */
+.receipt-wrapper {
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  justify-content: center; /* horizontal center */
+  align-items: center;     /* vertical center */
+}
+
+    
+
+
+/* PAPER */
+.receipt-paper {
+  background: #ffffff;
+  width: 320px;
+  padding: 20px;
+  border-radius: 6px;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.15);
+}
+
+/* HEADER */
+.receipt-header {
+  text-align: center;
+}
+
+.receipt-header h2 {
+  margin: 0;
+  font-size: 18px;
+  letter-spacing: 1px;
+}
+
+.receipt-header p {
+  margin: 4px 0 10px;
+  font-size: 12px;
+}
+
+/* META */
+.receipt-meta {
+  font-size: 12px;
+  margin-bottom: 8px;
+}
+
+.receipt-meta div {
+  margin-bottom: 4px;
+}
+
+/* TABLE */
+.receipt-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.receipt-table th {
+  text-align: left;
+  border-bottom: 1px dashed #999;
+  padding-bottom: 6px;
+}
+
+.receipt-table td {
+  padding: 6px 0;
+}
+
+.receipt-table th:last-child,
+.receipt-table td:last-child {
+  text-align: right;
+}
+
+/* TOTAL */
+.receipt-total {
+  text-align: right;
+  font-size: 15px;
+  font-weight: bold;
+  margin-top: 8px;
+}
+
+/* FOOTER */
+.receipt-footer {
+  text-align: center;
+  font-size: 12px;
+  margin-top: 10px;
+}
+
+/* ACTION BUTTONS */
+.receipt-actions {
+  width: 320px;              /* same width as receipt */
+  margin-top: 16px;
+  display: flex;
+  justify-content: center;   /* center group */
+  gap: 12px;                 /* control spacing here */
+}
+
+.btn-print,
+.btn-return {
+  padding: 8px 14px;
+  font-size: 13px;
+  border-radius: 6px;
+  text-decoration: none;
+  cursor: pointer;
+  border: none;
+}
+
+.btn-print {
+  background: #111827;
+  color: white;
+}
+
+.btn-print:hover {
+  background: #000;
+}
+
+.btn-return {
+  background: #e5e7eb;
+  color: #111827;
+}
+
+.btn-return:hover {
+  background: #d1d5db;
+}
+
+/* PRINT CLEANUP */
+@media print {
+  body {
+    background: white;
+    padding: 0;
+  }
+
+  .receipt-actions {
+    display: none;
+  }
+
+  .receipt-paper {
+    box-shadow: none;
+    border-radius: 0;
+  }
+}
+
+/* RECEIPT PAGE CENTERING */
+.receipt-page {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #f3f4f6;
+}
+
+/* RECEIPT CONTAINER */
+.receipt-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* RECEIPT CARD */
+.receipt {
+  background: white;
+  padding: 24px 20px;
+  width: 320px; /* thermal width */
+  border-radius: 10px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+  font-family: monospace;
+}
+
+/* ACTION BUTTONS */
+.receipt-actions {
+  margin-top: 18px;
+  display: flex;
+  gap: 12px;
+}
+
+/* PRINT BUTTON */
+.btn-print {
+  background: #111827;
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.btn-print:hover {
+  background: #000;
+}
+
+/* SECONDARY BUTTON */
+.btn-secondary {
+  background: #e5e7eb;
+  color: #111827;
+  padding: 8px 14px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-size: 14px;
+}
+

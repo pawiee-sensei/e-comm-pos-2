@@ -77,7 +77,7 @@ exports.index = async (req, res) => {
     WHERE status IN ('confirmed','cancelled')
     ${searchWhere}
     `,
-    searchParams
+    searchParams  
   );
 
   res.render('admin/orders/index', {
@@ -163,15 +163,16 @@ exports.confirm = async (req, res) => {
     );
   }
 
-  await db.query(
-    `
-    UPDATE orders
-    SET status = 'confirmed',
-        confirmed_at = NOW()
-    WHERE id = ?
-    `,
-    [id]
-  );
+ await db.query(
+  `
+  UPDATE orders
+  SET status = 'confirmed',
+      payment_status = 'paid',
+      confirmed_at = NOW()
+  WHERE id = ?
+  `,
+  [id]
+);
 
   res.redirect('/admin/orders');
 };

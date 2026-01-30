@@ -1,16 +1,16 @@
-// GLOBAL CART
+// GLOBAL CART (frontend only)
 window.posCart = {};
 
 // ADD PRODUCT TO CART
-document.querySelectorAll('.pos-card').forEach(card => {
-  card.addEventListener('click', () => {
-    const id = card.dataset.id;
+document.querySelectorAll('.pos-product').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const id = btn.dataset.id;
 
     if (!window.posCart[id]) {
       window.posCart[id] = {
         product_id: id,
-        name: card.dataset.name,
-        price: Number(card.dataset.price),
+        name: btn.dataset.name,
+        price: Number(btn.dataset.price),
         qty: 1
       };
     } else {
@@ -43,7 +43,7 @@ function renderCart() {
   totalEl.textContent = total.toFixed(2);
 }
 
-// REMOVE ITEM
+// REMOVE ITEM FROM CART
 document.addEventListener('click', e => {
   if (e.target.classList.contains('cart-remove')) {
     const id = e.target.dataset.id;

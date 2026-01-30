@@ -93,7 +93,16 @@
         <tbody>
           <% history.forEach(o => { %>
             <tr>
-              <td><%= o.customer_name %></td>
+              <td>
+              <% if (o.source === 'POS') { %>
+                Walk-in
+                <span class="badge pos">POS</span>
+              <% } else { %>
+                <%= o.customer_name %>
+              <% } %>
+            </td>
+
+
               <td>
                 <span class="badge <%= o.status %>">
                   <%= o.status %>

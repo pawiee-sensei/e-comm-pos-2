@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>POS Receipt</title>
+  <link rel="stylesheet" href="/public/css/admin.css">
+  <link rel="stylesheet" href="/public/css/admin.pos.receipt.css">
+</head>
+<body>
+
+<div class="receipt-page">
+  <div class="receipt-container">
+
+    <div class="receipt-paper">
+
+      <div class="receipt-header">
+        <h2>E-COMM POS</h2>
+        <p>Official Receipt</p>
+      </div>
+
+      <div class="receipt-meta">
+        <div>Order #: <strong><%= order.id %></strong></div>
+        <div>Date: <%= new Date(order.created_at).toLocaleString() %></div>
+        <div>Payment: <%= order.payment_mode.toUpperCase() %></div>
+      </div>
+
+      <hr>
+
+      <table class="receipt-table">
+        <thead>
+          <tr>
+            <th>Item</th>
+            <th>Qty</th>
+            <th>Amount</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% items.forEach(i => { %>
+            <tr>
+              <td><%= i.name %></td>
+              <td><%= i.qty %></td>
+              <td>₱<%= (Number(i.price) * i.qty).toFixed(2) %></td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+
+      <hr>
+
+      <div class="receipt-total">
+        TOTAL: ₱<%= Number(order.total).toFixed(2) %>
+      </div>
+
+      <div class="receipt-footer">
+        Thank you for your purchase
+      </div>
+
+      <!-- ✅ BUTTONS ARE NOW INSIDE THE RECEIPT -->
+      <div class="receipt-actions">
+        <button onclick="window.print()" class="btn-print">
+          Print Receipt
+        </button>
+        <a href="/admin/pos" class="btn-return">
+          Return to POS
+        </a>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

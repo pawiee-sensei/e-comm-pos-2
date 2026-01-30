@@ -180,7 +180,7 @@ body {
   color: #065f46;
 }
 
-.badge.canceled {
+.badge.cancelled {
   background: #fee2e2;
   color: #991b1b;
 }
@@ -333,4 +333,13 @@ body {
   background: #2563eb;
   color: white;
   border-color: #2563eb;
+}
+.badge.pos {
+  background: #e0f2fe;
+  color: #0369a1;
+  font-size: 11px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  margin-left: 6px;
+  font-weight: 600;
 }

@@ -1,5 +1,10 @@
+
+
 const db = require('../db');
 
+/**
+ * POS PAGE
+ */
 exports.index = async (req, res) => {
   const [products] = await db.query(`
     SELECT p.*, c.name AS category_name
@@ -9,24 +14,23 @@ exports.index = async (req, res) => {
     ORDER BY p.name ASC
   `);
 
-  // DAILY SUMMARY (POS ONLY)
   const [[summary]] = await db.query(`
     SELECT
       COUNT(*) AS transactions,
-      SUM(total) AS total_sales,
-      SUM(CASE WHEN payment_mode = 'cash' THEN total ELSE 0 END) AS cash_total,
-      SUM(CASE WHEN payment_mode = 'gcash' THEN total ELSE 0 END) AS gcash_total
+      IFNULL(SUM(total),0) AS total_sales,
+      IFNULL(SUM(CASE WHEN payment_mode = 'cash' THEN total ELSE 0 END),0) AS cash_total,
+      IFNULL(SUM(CASE WHEN payment_mode = 'gcash' THEN total ELSE 0 END),0) AS gcash_total
     FROM orders
     WHERE source = 'POS'
       AND DATE(created_at) = CURDATE()
   `);
 
-  res.render('admin/pos/index', {
-    products,
-    summary
-  });
+  res.render('admin/pos/index', { products, summary });
 };
 
+/**
+ * COMPLETE SALE
+ */
 exports.complete = async (req, res) => {
   const { items, payment_mode } = req.body;
 
@@ -35,18 +39,44 @@ exports.complete = async (req, res) => {
   }
 
   let total = 0;
-  for (const i of items) {
+  items.forEach(i => {
     total += i.price * i.qty;
-  }
+  });
 
   const [orderRes] = await db.query(
-    `
-    INSERT INTO orders
-    (status, total, payment_mode, source, confirmed_at, created_at)
-    VALUES ('confirmed', ?, ?, 'POS', NOW(), NOW())
-    `,
-    [total, payment_mode]
-  );
+  `
+  INSERT INTO orders
+  (
+    customer_name,
+    phone,
+    address,
+    status,
+    payment_mode,
+    payment_status,
+    source,
+    total,
+    confirmed_at,
+    created_at
+  )
+  VALUES
+  (
+    'POS Walk-in',
+    'N/A',
+    'N/A',
+    'confirmed',
+    ?,
+    'paid',
+    'POS',
+    ?,
+    NOW(),
+    NOW()
+  )
+  `,
+  [payment_mode, total]
+);
+
+
+
 
   const orderId = orderRes.insertId;
 
@@ -76,11 +106,35 @@ exports.complete = async (req, res) => {
       `
       INSERT INTO products_stock_logs
       (product_id, action, qty, prev_stock, new_stock, reason)
-      VALUES (?, 'pos_sale', ?, ?, ?, 'POS Sale')
+      VALUES (?, 'sale', ?, ?, ?, 'POS Sale')
       `,
       [i.product_id, i.qty, p.stock, newStock]
     );
   }
 
-  res.json({ ok: true });
+  res.json({ ok: true, orderId });
+};
+
+/**
+ * RECEIPT
+ */
+exports.receipt = async (req, res) => {
+  const id = req.params.id;
+
+  const [[order]] = await db.query(
+    `SELECT * FROM orders WHERE id = ?`,
+    [id]
+  );
+
+  const [items] = await db.query(
+    `
+    SELECT oi.qty, oi.price, p.name
+    FROM order_items oi
+    JOIN products p ON p.id = oi.product_id
+    WHERE oi.order_id = ?
+    `,
+    [id]
+  );
+
+  res.render('admin/pos/receipt', { order, items });
 };
