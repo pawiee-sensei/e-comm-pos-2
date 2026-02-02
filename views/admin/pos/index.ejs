@@ -31,6 +31,8 @@
     </div>
   </section>
 
+  
+
   <!-- PRODUCTS -->
   <section class="pos-products">
     <h2>Products</h2>
@@ -63,10 +65,12 @@
   </div>
 
   <div class="pos-controls">
-    <select name="payment_mode" id="payment-mode" class="pos-payment">
-      <option value="cash">Cash</option>
-      <option value="gcash">GCash</option>
-    </select>
+    <select id="payment-mode" class="pos-payment">
+  <option value="COD">Cash</option>
+  <option value="GCASH">GCash</option>
+</select>
+
+
 
     <button
       type="button"
@@ -77,6 +81,53 @@
     </button>
   </div>
 </section>
+
+
+<!-- POS SALES REPORT -->
+<!-- POS DAILY SALES -->
+<section class="pos-sales-card">
+
+  <div class="pos-sales-header">
+    <h3>Daily POS Sales</h3>
+
+    <form method="GET" class="pos-sales-filter">
+      <input type="date" name="date" value="<%= date %>">
+      <button type="submit" class="btn-filter">View</button>
+    </form>
+  </div>
+
+  <% if (!sales.length) { %>
+    <div class="pos-empty">No sales recorded for this date</div>
+  <% } else { %>
+    <div class="pos-sales-list">
+      <% sales.forEach((s, idx) => { %>
+        <div class="pos-sale-row <%= idx === 0 ? 'latest' : '' %>">
+          <div class="sale-left">
+            <div class="sale-time">
+              <%= new Date(s.created_at).toLocaleTimeString() %>
+            </div>
+            <div class="sale-payment <%= s.payment_mode.toLowerCase() %>">
+              <%= s.payment_mode %>
+            </div>
+          </div>
+
+          <div class="sale-right">
+            <div class="sale-total">₱<%= s.total %></div>
+            <a
+              href="/admin/pos/receipt/<%= s.id %>"
+              target="_blank"
+              class="sale-receipt"
+            >
+              Receipt
+            </a>
+          </div>
+        </div>
+      <% }) %>
+    </div>
+  <% } %>
+
+</section>
+
 
 
 </main>

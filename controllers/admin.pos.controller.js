@@ -6,6 +6,8 @@ const db = require('../db');
  * POS PAGE
  */
 exports.index = async (req, res) => {
+  const date = req.query.date || new Date().toISOString().slice(0, 10);
+
   const [products] = await db.query(`
     SELECT p.*, c.name AS category_name
     FROM products p
@@ -16,17 +18,33 @@ exports.index = async (req, res) => {
 
   const [[summary]] = await db.query(`
     SELECT
-      COUNT(*) AS transactions,
-      IFNULL(SUM(total),0) AS total_sales,
-      IFNULL(SUM(CASE WHEN payment_mode = 'cash' THEN total ELSE 0 END),0) AS cash_total,
-      IFNULL(SUM(CASE WHEN payment_mode = 'gcash' THEN total ELSE 0 END),0) AS gcash_total
+  COUNT(*) AS transactions,
+  IFNULL(SUM(total),0) AS total_sales,
+  IFNULL(SUM(CASE WHEN payment_mode = 'COD' THEN total ELSE 0 END),0) AS cash_total,
+  IFNULL(SUM(CASE WHEN payment_mode = 'GCASH' THEN total ELSE 0 END),0) AS gcash_total
+FROM orders
+WHERE DATE(created_at) = CURDATE()
+  AND status = 'confirmed'
+
+
+  `, [date]);
+
+  const [sales] = await db.query(`
+    SELECT id, payment_mode, total, created_at
     FROM orders
     WHERE source = 'POS'
-      AND DATE(created_at) = CURDATE()
-  `);
+      AND DATE(created_at) = ?
+    ORDER BY created_at DESC
+  `, [date]);
 
-  res.render('admin/pos/index', { products, summary });
+  res.render('admin/pos/index', {
+    products,
+    summary,
+    sales,
+    date
+  });
 };
+
 
 /**
  * COMPLETE SALE
@@ -138,3 +156,4 @@ exports.receipt = async (req, res) => {
 
   res.render('admin/pos/receipt', { order, items });
 };
+

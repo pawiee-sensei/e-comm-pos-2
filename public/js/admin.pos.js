@@ -1,3 +1,5 @@
+const searchInput = document.getElementById('pos-search');
+
 // GLOBAL CART
 window.posCart = {};
 
@@ -76,4 +78,14 @@ document.getElementById('btn-complete-sale').addEventListener('click', async () 
   } else {
     alert('Failed to complete sale');
   }
+});
+
+// POS PRODUCT SEARCH
+searchInput.addEventListener('input', () => {
+  const q = searchInput.value.toLowerCase();
+
+  document.querySelectorAll('.pos-card').forEach(card => {
+    const name = card.dataset.name.toLowerCase();
+    card.style.display = name.includes(q) ? 'block' : 'none';
+  });
 });

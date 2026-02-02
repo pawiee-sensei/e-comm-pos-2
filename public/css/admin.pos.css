@@ -1,5 +1,8 @@
 /* DAILY SUMMARY */
 .pos-summary {
+  position: sticky;
+  top: 12px;
+  z-index: 3;
   display:grid;
   grid-template-columns: repeat(4,1fr);
   gap:16px;
@@ -139,4 +142,140 @@
 
 .btn-complete-sale:hover {
   background: #15803d;
+}
+
+/* POS DAILY SALES CARD */
+.pos-sales-card {
+  background: white;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  padding: 16px;
+  margin-top: 28px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+}
+
+/* Header */
+.pos-sales-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.pos-sales-header h3 {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+/* Date filter */
+.pos-sales-filter {
+  display: flex;
+  gap: 8px;
+}
+
+.pos-sales-filter input {
+  padding: 6px 8px;
+  border-radius: 6px;
+  border: 1px solid #d1d5db;
+  font-size: 13px;
+  height: 30px;
+}
+
+.btn-filter {
+  height: 30px;
+  padding: 0 12px;
+  border-radius: 6px;
+  border: none;
+  background: #2563eb;
+  color: white;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.btn-filter:hover {
+  background: #1d4ed8;
+}
+
+/* Empty state */
+.pos-empty {
+  padding: 18px;
+  text-align: center;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+/* Sales list */
+.pos-sales-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Single sale row */
+.pos-sale-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  transition: background .12s ease;
+}
+
+/* Left */
+.sale-left {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.sale-time {
+  font-size: 13px;
+  color: #374151;
+}
+
+.sale-payment {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.sale-payment.cod {
+  background: #e0f2fe;
+  color: #075985;
+}
+
+.sale-payment.gcash {
+  background: #ede9fe;
+  color: #5b21b6;
+}
+
+/* Right */
+.sale-right {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.sale-total {
+  font-weight: 600;
+  font-size: 15px;
+}
+
+.sale-receipt {
+  font-size: 13px;
+  text-decoration: none;
+  color: #2563eb;
+}
+
+.sale-receipt:hover {
+  text-decoration: underline;
+}
+
+.pos-sale-row.latest {
+  border-left: 4px solid #16a34a;
+  background: #f0fdf4;
 }

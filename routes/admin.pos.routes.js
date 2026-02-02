@@ -14,4 +14,5 @@ router.post('/pos/complete', pos.complete);
 // Receipt
 router.get('/pos/receipt/:id', pos.receipt);
 
+
 module.exports = router;
