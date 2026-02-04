@@ -220,3 +220,99 @@ body {
   font-size: 14px;
 }
 
+
+/* ================================
+   VOID MODAL (POS RECEIPT)
+================================ */
+/* BACKDROP */
+.void-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.hidden { display: none !important; }
+
+/* MODAL */
+.void-modal {
+  background: white;
+  width: 360px;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0,0,0,.2);
+}
+
+/* PIN STAGE */
+.pin-boxes {
+  display: flex;
+  justify-content: space-between;
+  margin: 16px 0 20px;
+}
+
+.pin-boxes input {
+  width: 50px;
+  height: 64px;
+  font-size: 28px;
+  text-align: center;
+  border: 2px solid #d1d5db;
+  border-radius: 8px;
+}
+
+.pin-boxes input:focus {
+  outline: none;
+  border-color: #2563eb;
+}
+
+/* VOID DETAILS */
+.order-preview {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 12px;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+
+#voidReason {
+  width: 100%;            /* prevent overflow */
+  min-height: 80px;       /* normal textarea height */
+  resize: vertical;       /* allow resize, but clean */
+  padding: 10px;
+  font-size: 14px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  box-sizing: border-box; /* VERY IMPORTANT */
+}
+
+
+.void-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 6px;
+}
+
+/* BUTTONS */
+.btn-danger {
+  background: #dc2626;
+  color: white;
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-danger:hover {
+  background: #b91c1c;
+}
+ /* VOID MODAL BODY */
+.void-modal-body {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}

@@ -2,6 +2,7 @@
 
 const db = require('../db');
 
+
 /**
  * POS PAGE
  */
@@ -155,5 +156,90 @@ exports.receipt = async (req, res) => {
   );
 
   res.render('admin/pos/receipt', { order, items });
+};
+
+
+  const bcrypt = require('bcrypt');
+
+/**
+ * VOID / RETURN SALE (ADMIN APPROVED)
+ */
+exports.voidSale = async (req, res) => {
+  const { order_id, pin, reason } = req.body;
+
+  if (!order_id || !pin || !reason) {
+    return res.json({ ok: false, error: 'Missing data' });
+  }
+
+  /* 1️⃣ Verify admin PIN */
+  const [[admin]] = await db.query(
+    `SELECT pin_hash FROM admins LIMIT 1`
+  );
+
+  if (!admin) {
+    return res.json({ ok: false, error: 'Admin not found' });
+  }
+
+  const validPin = await bcrypt.compare(pin, admin.pin_hash);
+  if (!validPin) {
+    return res.json({ ok: false, error: 'Invalid PIN' });
+  }
+
+  /* 2️⃣ Get order */
+  const [[order]] = await db.query(
+    `SELECT * FROM orders WHERE id = ? AND status = 'confirmed'`,
+    [order_id]
+  );
+
+  if (!order) {
+    return res.json({ ok: false, error: 'Order not found or already voided' });
+  }
+
+  /* 3️⃣ Restore stock */
+  const [items] = await db.query(
+    `SELECT * FROM order_items WHERE order_id = ?`,
+    [order_id]
+  );
+
+  for (const item of items) {
+    const [[product]] = await db.query(
+      `SELECT stock FROM products WHERE id = ?`,
+      [item.product_id]
+    );
+
+    const restoredStock = product.stock + item.qty;
+
+    await db.query(
+      `UPDATE products SET stock = ? WHERE id = ?`,
+      [restoredStock, item.product_id]
+    );
+
+    await db.query(
+      `
+      INSERT INTO products_stock_logs
+      (product_id, action, qty, prev_stock, new_stock, reason)
+      VALUES (?, 'void', ?, ?, ?, 'POS Void')
+      `,
+      [
+        item.product_id,
+        item.qty,
+        product.stock,
+        restoredStock
+      ]
+    );
+  }
+
+  /* 4️⃣ Mark order as voided */
+  await db.query(
+    `
+    UPDATE orders
+      SET status = 'cancelled',
+          cancelled_at = NOW()
+      WHERE id = ?
+    `,
+    [reason, order_id]
+  );
+
+  res.json({ ok: true });
 };
 

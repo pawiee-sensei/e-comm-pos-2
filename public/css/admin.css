@@ -343,3 +343,8 @@ body {
   margin-left: 6px;
   font-weight: 600;
 }
+
+.badge.voided {
+  background: #fee2e2;
+  color: #991b1b;
+}

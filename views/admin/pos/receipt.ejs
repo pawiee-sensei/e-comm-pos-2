@@ -7,9 +7,11 @@
 </head>
 <body>
 
+<!-- SOURCE OF TRUTH FOR ORDER ID -->
+<div id="receiptRoot" data-order-id="<%= order.id %>"></div>
+
 <div class="receipt-page">
   <div class="receipt-container">
-
     <div class="receipt-paper">
 
       <div class="receipt-header">
@@ -54,19 +56,77 @@
         Thank you for your purchase
       </div>
 
-      <!-- ✅ BUTTONS ARE NOW INSIDE THE RECEIPT -->
+      <!-- ACTION BUTTONS -->
       <div class="receipt-actions">
-        <button onclick="window.print()" class="btn-print">
+        <button type="button" onclick="window.print()" class="btn-print">
           Print Receipt
         </button>
+
         <a href="/admin/pos" class="btn-return">
           Return to POS
         </a>
+
+        <button type="button" id="btnVoidSale" class="btn-void">
+          Void / Return
+        </button>
       </div>
 
     </div>
   </div>
 </div>
 
+<!-- ================================= -->
+<!-- VOID MODAL (HIDDEN BY DEFAULT)     -->
+<!-- ================================= -->
+
+<div id="voidModal" class="void-backdrop hidden">
+  <div class="void-modal">
+
+    <!-- STEP 1: PIN -->
+    <div id="pinStage">
+      <h3>Admin Authorization</h3>
+
+      <div class="pin-boxes">
+        <input maxlength="1" inputmode="numeric">
+        <input maxlength="1" inputmode="numeric">
+        <input maxlength="1" inputmode="numeric">
+        <input maxlength="1" inputmode="numeric">
+      </div>
+
+      <button type="button" id="verifyPin" class="btn-primary">
+        Verify PIN
+      </button>
+    </div>
+
+    <!-- STEP 2: VOID DETAILS -->
+    <div id="voidStage" class="hidden">
+      <h3>Void Order</h3>
+
+      <div class="void-order-preview">
+        <p><strong>Order #:</strong> <%= order.id %></p>
+        <p><strong>Total:</strong> ₱<%= Number(order.total).toFixed(2) %></p>
+        <p><strong>Payment:</strong> <%= order.payment_mode.toUpperCase() %></p>
+      </div>
+
+      <textarea
+        id="voidReason"
+        placeholder="Reason for void (required)"
+      ></textarea>
+
+      <div class="void-actions">
+        <button type="button" id="confirmVoid" class="btn-danger">
+          Confirm Void
+        </button>
+
+        <button type="button" id="btnCancelVoid" class="btn-secondary">
+          Cancel
+        </button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script src="/public/js/admin.pos.js"></script>
 </body>
 </html>

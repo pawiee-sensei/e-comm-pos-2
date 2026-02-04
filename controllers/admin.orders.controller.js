@@ -62,7 +62,7 @@ exports.index = async (req, res) => {
     `
     SELECT *
     FROM orders
-    WHERE status IN ('confirmed','cancelled')
+    WHERE status IN ('confirmed','cancelled','voided')
     ${searchWhere}
     ORDER BY COALESCE(confirmed_at, cancelled_at, created_at) DESC
     LIMIT ? OFFSET ?
@@ -74,8 +74,7 @@ exports.index = async (req, res) => {
     `
     SELECT COUNT(*) total
     FROM orders
-    WHERE status IN ('confirmed','cancelled')
-    ${searchWhere}
+    WHERE status IN ('confirmed','cancelled','voided')
     `,
     searchParams  
   );
@@ -166,7 +165,7 @@ exports.confirm = async (req, res) => {
  await db.query(
   `
   UPDATE orders
-  SET status = 'confirmed',
+  SET status = 'confirmed', 
       payment_status = 'paid',
       confirmed_at = NOW()
   WHERE id = ?

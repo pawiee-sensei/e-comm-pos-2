@@ -14,5 +14,7 @@ router.post('/pos/complete', pos.complete);
 // Receipt
 router.get('/pos/receipt/:id', pos.receipt);
 
+// void
+router.post('/pos/void', pos.voidSale);
 
 module.exports = router;
