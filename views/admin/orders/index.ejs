@@ -104,10 +104,17 @@
 
 
               <td>
-                <span class="badge <%= o.status %>">
-                  <%= o.status %>
-                </span>
+                <% if (o.status === 'voided') { %>
+                  <span class="badge voided">VOIDED</span>
+                <% } else if (o.status === 'confirmed') { %>
+                  <span class="badge confirmed">CONFIRMED</span>
+                <% } else if (o.status === 'cancelled') { %>
+                  <span class="badge cancelled">CANCELLED</span>
+                <% } else { %>
+                  <span class="badge pending">PENDING</span>
+                <% } %>
               </td>
+
               <td>₱<%= o.total %></td>
               <td><%= o.created_at.toLocaleString() %></td>
               <td>

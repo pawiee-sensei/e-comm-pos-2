@@ -280,163 +280,44 @@
   background: #f0fdf4;
 }
 
-/* ================================
-   VOID MODAL (POS RECEIPT)
-================================ */
-
-.hidden {
-  display: none;
+/* 🔴 Voided sale row */
+.sale-voided {
+  background: #fee2e2;
+  border-left: 4px solid #dc2626;
+  opacity: 0.85;
 }
 
-/* Backdrop */
-.void-backdrop {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.45);
-  z-index: 90;
-}
-
-/* Modal box */
-.void-modal {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background: white;
-  width: 360px;
-  border-radius: 12px;
-  padding: 18px;
-  z-index: 100;
-  box-shadow: 0 12px 30px rgba(0,0,0,0.25);
-}
-
-.void-modal h3 {
-  margin-bottom: 12px;
-  font-size: 16px;
+/* 🏷️ VOIDED badge */
+.badge-voided {
+  background: #dc2626;
+  color: #fff;
   font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  margin-left: 8px;
 }
 
-/* Inputs */
-.void-modal input,
-.void-modal textarea {
-  width: 100%;
-  margin-bottom: 10px;
-  padding: 9px 10px;
-  border-radius: 6px;
-  border: 1px solid #d1d5db;
+/* 🚫 Disabled receipt */
+.sale-receipt.disabled {
+  color: #9ca3af;
+  cursor: not-allowed;
+  text-decoration: line-through;
   font-size: 14px;
+  pointer-events: none;
 }
 
-.void-modal textarea {
-  resize: none;
-  height: 80px;
-}
-
-/* Buttons */
-.void-actions {
+/* CENTER VOIDED LABEL */
+.sale-center {
+  flex: 1;
   display: flex;
-  justify-content: flex-end;
-  gap: 10px;
+  justify-content: center;
+  align-items: center;
 }
 
-.btn-void {
-  background: #dc2626;
-  color: white;
-  border: none;
-  padding: 8px 14px;
-  border-radius: 6px;
-  font-size: 13px;
-  cursor: pointer;
-}
-
-.btn-void-confirm {
-  background: #dc2626;
-  color: white;
-  border: none;
-  padding: 8px 14px;
-  border-radius: 6px;
-  cursor: pointer;
-}
-
-.btn-void-cancel {
-  background: #e5e7eb;
-  border: none;
-  padding: 8px 14px;
-  border-radius: 6px;
-  cursor: pointer;
-}
-
-/* MODAL BACKDROP */
-.modal-backdrop {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.45);
-  z-index: 100;
-}
-
-/* MODAL BOX */
-.modal {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background: white;
-  width: 360px;
-  padding: 18px;
-  border-radius: 10px;
-  z-index: 101;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.25);
-}
-
-/* HIDDEN STATE */
-.hidden {
-  display: none !important;
-}
-
-/* MODAL CONTENT */
-.modal h3 {
-  margin-bottom: 12px;
-  font-size: 16px;
-}
-
-.modal input,
-.modal textarea {
-  width: 100%;
-  padding: 8px 10px;
-  margin-bottom: 10px;
-  border-radius: 6px;
-  border: 1px solid #d1d5db;
-  font-size: 14px;
-}
-
-/* MODAL ACTIONS */
-.modal-actions {
+/* make sure row uses flex properly */
+.pos-sale-row {
   display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-}
-
-/* BUTTONS */
-.btn-void {
-  border: 1px solid #991b1b;
-  background: white;
-  color: #991b1b;
-  padding: 8px 12px;
-  border-radius: 6px;
-  cursor: pointer;
-}
-
-.btn-danger {
-  background: #dc2626;
-  color: white;
-  border: none;
-  padding: 8px 14px;
-  border-radius: 6px;
-}
-
-.btn-secondary {
-  background: #e5e7eb;
-  border: none;
-  padding: 8px 14px;
-  border-radius: 6px;
+  align-items: center;
+  justify-content: space-between;
 }

@@ -99,34 +99,65 @@
   <% if (!sales.length) { %>
     <div class="pos-empty">No sales recorded for this date</div>
   <% } else { %>
+
     <div class="pos-sales-list">
       <% sales.forEach((s, idx) => { %>
-        <div class="pos-sale-row <%= idx === 0 ? 'latest' : '' %>">
+
+        <div class="
+          pos-sale-row
+          <%= idx === 0 ? 'latest' : '' %>
+          <%= s.status === 'voided' ? 'sale-voided' : '' %>
+        ">
+
+          <!-- LEFT -->
           <div class="sale-left">
             <div class="sale-time">
               <%= new Date(s.created_at).toLocaleTimeString() %>
             </div>
+
             <div class="sale-payment <%= s.payment_mode.toLowerCase() %>">
               <%= s.payment_mode %>
             </div>
           </div>
 
+          <!-- CENTER (VOIDED ONLY) -->
+          <% if (s.status === 'voided') { %>
+            <div class="sale-center">
+              <span class="badge badge-voided">VOIDED</span>
+            </div>
+          <% } %>
+
+          <!-- RIGHT -->
           <div class="sale-right">
-            <div class="sale-total">₱<%= s.total %></div>
-            <a
-              href="/admin/pos/receipt/<%= s.id %>"
-              target="_blank"
-              class="sale-receipt"
-            >
-              Receipt
-            </a>
+            <div class="sale-total">
+              ₱<%= Number(s.total).toFixed(2) %>
+            </div>
+
+            <% if (s.status === 'voided') { %>
+              <span class="sale-receipt disabled">
+                Receipt
+              </span>
+            <% } else { %>
+              <a
+                href="/admin/pos/receipt/<%= s.id %>"
+                target="_blank"
+                class="sale-receipt"
+              >
+                Receipt
+              </a>
+            <% } %>
           </div>
+
         </div>
+
       <% }) %>
     </div>
+
   <% } %>
 
 </section>
+
+
 
 
 

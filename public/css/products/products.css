@@ -382,15 +382,34 @@
 
 /* SUBTLE BADGES */
 .log-badge {
-  padding: 3px 7px;
-  font-size: 11px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
   font-weight: 600;
-  border-radius: 4px;
-  background: #e5e7eb;
-  color: #374151;
   display: inline-block;
-  text-align: center;
 }
+
+.log-sale {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.log-voided {
+  background: #fee2e2;
+  color: #991b1b;
+  border: 1px solid #fecaca;
+}
+
+.log-row-voided {
+  background: #fff1f2; /* light red */
+}
+
+.log-badge.log-voided {
+  background: #fee2e2;
+  color: #991b1b;
+  font-weight: 600;
+}
+
 
 /* differentiators */
 .log-create { background:#e5e7eb; }

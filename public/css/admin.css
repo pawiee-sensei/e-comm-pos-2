@@ -168,6 +168,8 @@ body {
   border-radius: 999px;
   font-size: 12px;
   font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
 }
 
 .badge.pending {
@@ -345,6 +347,26 @@ body {
 }
 
 .badge.voided {
-  background: #fee2e2;
-  color: #991b1b;
+  background:#fee2e2;
+  color:#991b1b;
+  border:1px solid #fecaca;
+  font-weight:600;
+}
+
+
+/* Order History table only */
+.admin-card table.admin-table thead th:nth-child(2),
+.admin-card table.admin-table thead th:nth-child(3),
+.admin-card table.admin-table thead th:nth-child(4),
+.admin-card table.admin-table thead th:nth-child(5) {
+  text-align: center;
+}
+
+/* Body cells */
+.admin-card table.admin-table tbody td:nth-child(2),
+.admin-card table.admin-table tbody td:nth-child(3),
+.admin-card table.admin-table tbody td:nth-child(4),
+.admin-card table.admin-table tbody td:nth-child(5) {
+  text-align: center;
+  vertical-align: middle;
 }

@@ -1,10 +1,12 @@
 const db = require('../db');
 
 /**
+ * ======================================================
  * ORDERS LIST PAGE
  * - Pending orders (paginated)
- * - Order history (confirmed + cancelled, paginated)
+ * - Order history (confirmed + cancelled + voided)
  * - Search by customer name / phone
+ * ======================================================
  */
 exports.index = async (req, res) => {
   const q = req.query.q || '';
@@ -55,7 +57,7 @@ exports.index = async (req, res) => {
   /**
    * =========================
    * ORDER HISTORY
-   * (CONFIRMED + CANCELLED)
+   * (CONFIRMED + CANCELLED + VOIDED)
    * =========================
    */
   const [history] = await db.query(
@@ -64,7 +66,8 @@ exports.index = async (req, res) => {
     FROM orders
     WHERE status IN ('confirmed','cancelled','voided')
     ${searchWhere}
-    ORDER BY COALESCE(confirmed_at, cancelled_at, created_at) DESC
+    ORDER BY 
+      COALESCE(voided_at, cancelled_at, confirmed_at, created_at) DESC
     LIMIT ? OFFSET ?
     `,
     [...searchParams, historyLimit, historyOffset]
@@ -76,7 +79,7 @@ exports.index = async (req, res) => {
     FROM orders
     WHERE status IN ('confirmed','cancelled','voided')
     `,
-    searchParams  
+    searchParams
   );
 
   res.render('admin/orders/index', {
@@ -92,8 +95,11 @@ exports.index = async (req, res) => {
   });
 };
 
+
 /**
+ * ======================================================
  * ORDER DETAIL VIEW
+ * ======================================================
  */
 exports.view = async (req, res) => {
   const id = req.params.id;
@@ -125,11 +131,14 @@ exports.view = async (req, res) => {
   });
 };
 
+
 /**
+ * ======================================================
  * CONFIRM ORDER
  * - Deduct stock
  * - Log stock as SALE
- * - Move order to history
+ * - Mark order as CONFIRMED
+ * ======================================================
  */
 exports.confirm = async (req, res) => {
   const id = req.params.id;
@@ -162,24 +171,27 @@ exports.confirm = async (req, res) => {
     );
   }
 
- await db.query(
-  `
-  UPDATE orders
-  SET status = 'confirmed', 
-      payment_status = 'paid',
-      confirmed_at = NOW()
-  WHERE id = ?
-  `,
-  [id]
-);
+  await db.query(
+    `
+    UPDATE orders
+    SET status = 'confirmed',
+        payment_status = 'paid',
+        confirmed_at = NOW()
+    WHERE id = ?
+    `,
+    [id]
+  );
 
   res.redirect('/admin/orders');
 };
 
+
 /**
+ * ======================================================
  * CANCEL ORDER
  * - No stock change
- * - Moves order to history as CANCELLED
+ * - Mark order as CANCELLED
+ * ======================================================
  */
 exports.cancel = async (req, res) => {
   const id = req.params.id;

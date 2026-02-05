@@ -1,7 +1,5 @@
-
-
 const db = require('../db');
-
+const bcrypt = require('bcrypt');
 
 /**
  * POS PAGE
@@ -19,19 +17,17 @@ exports.index = async (req, res) => {
 
   const [[summary]] = await db.query(`
     SELECT
-  COUNT(*) AS transactions,
-  IFNULL(SUM(total),0) AS total_sales,
-  IFNULL(SUM(CASE WHEN payment_mode = 'COD' THEN total ELSE 0 END),0) AS cash_total,
-  IFNULL(SUM(CASE WHEN payment_mode = 'GCASH' THEN total ELSE 0 END),0) AS gcash_total
-FROM orders
-WHERE DATE(created_at) = CURDATE()
-  AND status = 'confirmed'
-
-
-  `, [date]);
+      COUNT(*) AS transactions,
+      IFNULL(SUM(total),0) AS total_sales,
+      IFNULL(SUM(CASE WHEN payment_mode = 'COD' THEN total ELSE 0 END),0) AS cash_total,
+      IFNULL(SUM(CASE WHEN payment_mode = 'GCASH' THEN total ELSE 0 END),0) AS gcash_total
+    FROM orders
+    WHERE DATE(created_at) = CURDATE()
+      AND status = 'confirmed'
+  `);
 
   const [sales] = await db.query(`
-    SELECT id, payment_mode, total, created_at
+    SELECT id, payment_mode, total, created_at, status
     FROM orders
     WHERE source = 'POS'
       AND DATE(created_at) = ?
@@ -48,7 +44,7 @@ WHERE DATE(created_at) = CURDATE()
 
 
 /**
- * COMPLETE SALE
+ * COMPLETE SALE (POS)
  */
 exports.complete = async (req, res) => {
   const { items, payment_mode } = req.body;
@@ -62,40 +58,34 @@ exports.complete = async (req, res) => {
     total += i.price * i.qty;
   });
 
-  const [orderRes] = await db.query(
-  `
-  INSERT INTO orders
-  (
-    customer_name,
-    phone,
-    address,
-    status,
-    payment_mode,
-    payment_status,
-    source,
-    total,
-    confirmed_at,
-    created_at
-  )
-  VALUES
-  (
-    'POS Walk-in',
-    'N/A',
-    'N/A',
-    'confirmed',
-    ?,
-    'paid',
-    'POS',
-    ?,
-    NOW(),
-    NOW()
-  )
-  `,
-  [payment_mode, total]
-);
-
-
-
+  const [orderRes] = await db.query(`
+    INSERT INTO orders
+    (
+      customer_name,
+      phone,
+      address,
+      status,
+      payment_mode,
+      payment_status,
+      source,
+      total,
+      confirmed_at,
+      created_at
+    )
+    VALUES
+    (
+      'POS Walk-in',
+      'N/A',
+      'N/A',
+      'confirmed',
+      ?,
+      'paid',
+      'POS',
+      ?,
+      NOW(),
+      NOW()
+    )
+  `, [payment_mode, total]);
 
   const orderId = orderRes.insertId;
 
@@ -112,27 +102,22 @@ exports.complete = async (req, res) => {
       [newStock, i.product_id]
     );
 
-    await db.query(
-      `
+    await db.query(`
       INSERT INTO order_items
       (order_id, product_id, qty, price)
       VALUES (?, ?, ?, ?)
-      `,
-      [orderId, i.product_id, i.qty, i.price]
-    );
+    `, [orderId, i.product_id, i.qty, i.price]);
 
-    await db.query(
-      `
+    await db.query(`
       INSERT INTO products_stock_logs
       (product_id, action, qty, prev_stock, new_stock, reason)
       VALUES (?, 'sale', ?, ?, ?, 'POS Sale')
-      `,
-      [i.product_id, i.qty, p.stock, newStock]
-    );
+    `, [i.product_id, i.qty, p.stock, newStock]);
   }
 
   res.json({ ok: true, orderId });
 };
+
 
 /**
  * RECEIPT
@@ -145,24 +130,19 @@ exports.receipt = async (req, res) => {
     [id]
   );
 
-  const [items] = await db.query(
-    `
+  const [items] = await db.query(`
     SELECT oi.qty, oi.price, p.name
     FROM order_items oi
     JOIN products p ON p.id = oi.product_id
     WHERE oi.order_id = ?
-    `,
-    [id]
-  );
+  `, [id]);
 
   res.render('admin/pos/receipt', { order, items });
 };
 
 
-  const bcrypt = require('bcrypt');
-
 /**
- * VOID / RETURN SALE (ADMIN APPROVED)
+ * VOID / RETURN SALE (POS ONLY)
  */
 exports.voidSale = async (req, res) => {
   const { order_id, pin, reason } = req.body;
@@ -171,7 +151,7 @@ exports.voidSale = async (req, res) => {
     return res.json({ ok: false, error: 'Missing data' });
   }
 
-  /* 1️⃣ Verify admin PIN */
+  /* 1️⃣ VERIFY ADMIN PIN */
   const [[admin]] = await db.query(
     `SELECT pin_hash FROM admins LIMIT 1`
   );
@@ -185,7 +165,7 @@ exports.voidSale = async (req, res) => {
     return res.json({ ok: false, error: 'Invalid PIN' });
   }
 
-  /* 2️⃣ Get order */
+  /* 2️⃣ GET CONFIRMED POS ORDER */
   const [[order]] = await db.query(
     `SELECT * FROM orders WHERE id = ? AND status = 'confirmed'`,
     [order_id]
@@ -195,7 +175,7 @@ exports.voidSale = async (req, res) => {
     return res.json({ ok: false, error: 'Order not found or already voided' });
   }
 
-  /* 3️⃣ Restore stock */
+  /* 3️⃣ RESTORE STOCK */
   const [items] = await db.query(
     `SELECT * FROM order_items WHERE order_id = ?`,
     [order_id]
@@ -214,32 +194,27 @@ exports.voidSale = async (req, res) => {
       [restoredStock, item.product_id]
     );
 
-    await db.query(
-      `
+    await db.query(`
       INSERT INTO products_stock_logs
       (product_id, action, qty, prev_stock, new_stock, reason)
-      VALUES (?, 'void', ?, ?, ?, 'POS Void')
-      `,
-      [
-        item.product_id,
-        item.qty,
-        product.stock,
-        restoredStock
-      ]
-    );
+      VALUES (?, 'voided', ?, ?, ?, 'POS Void')
+    `, [
+      item.product_id,
+      item.qty,
+      product.stock,
+      restoredStock
+    ]);
   }
 
-  /* 4️⃣ Mark order as voided */
-  await db.query(
-    `
+  /* 4️⃣ MARK ORDER AS VOIDED (THIS WAS THE BUG) */
+  await db.query(`
     UPDATE orders
-      SET status = 'cancelled',
-          cancelled_at = NOW()
-      WHERE id = ?
-    `,
-    [reason, order_id]
-  );
+    SET status = 'voided',
+        payment_status = 'voided',
+        voided_at = NOW(),
+        void_reason = ?
+    WHERE id = ?
+  `, [reason, order_id]);
 
   res.json({ ok: true });
 };
-
