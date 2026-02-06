@@ -1,94 +1,113 @@
-/* ======================================================
-   POS SEARCH (PRODUCT LIST) — POS PAGE ONLY
-====================================================== */
+  /* ======================================================
+    POS SEARCH (PRODUCT LIST)
+  ====================================================== */
 
-const searchInput = document.getElementById('pos-search');
+  const searchInput = document.getElementById('pos-search');
 
-if (searchInput) {
-  searchInput.addEventListener('input', () => {
-    const q = searchInput.value.toLowerCase();
+  if (searchInput) {
+    searchInput.addEventListener('input', () => {
+      const q = searchInput.value.toLowerCase();
 
-    document.querySelectorAll('.pos-card').forEach(card => {
-      const name = card.dataset.name.toLowerCase();
-      card.style.display = name.includes(q) ? 'block' : 'none';
+      document.querySelectorAll('.pos-card').forEach(card => {
+        const name = card.dataset.name.toLowerCase();
+        card.style.display = name.includes(q) ? 'block' : 'none';
+      });
+    });
+  }
+
+  /* ======================================================
+    GLOBAL CART
+  ====================================================== */
+
+  window.posCart = {};
+
+  /* ADD PRODUCT TO CART */
+  document.querySelectorAll('.pos-card').forEach(card => {
+    card.addEventListener('click', () => {
+      const id = card.dataset.id;
+
+      if (!window.posCart[id]) {
+        window.posCart[id] = {
+          product_id: id,
+          name: card.dataset.name,
+          price: Number(card.dataset.price),
+          qty: 1
+        };
+      } else {
+        window.posCart[id].qty++;
+      }
+
+      renderCart();
     });
   });
-}
 
-/* ======================================================
-   GLOBAL CART (POS PAGE ONLY)
-====================================================== */
+  /* RENDER CART */
+  function renderCart() {
+    const cartItems = document.getElementById('cart-items');
+    const totalEl = document.getElementById('cart-total');
 
-window.posCart = {};
+    if (!cartItems || !totalEl) return;
 
-/* ADD PRODUCT TO CART */
-document.querySelectorAll('.pos-card').forEach(card => {
-  card.addEventListener('click', () => {
-    const id = card.dataset.id;
+    cartItems.innerHTML = '';
+    let total = 0;
 
-    if (!window.posCart[id]) {
-      window.posCart[id] = {
-        product_id: id,
-        name: card.dataset.name,
-        price: Number(card.dataset.price),
-        qty: 1
-      };
-    } else {
-      window.posCart[id].qty++;
-    }
+    Object.values(window.posCart).forEach(item => {
+      total += item.price * item.qty;
 
-    renderCart();
-  });
-});
+      cartItems.innerHTML += `
+        <div class="cart-row">
+          <span>${item.name} × ${item.qty}</span>
+          <button class="cart-remove" data-id="${item.product_id}">✕</button>
+        </div>
+      `;
+    });
 
-/* RENDER CART */
-function renderCart() {
-  const cartItems = document.getElementById('cart-items');
-  const totalEl = document.getElementById('cart-total');
-
-  if (!cartItems || !totalEl) return;
-
-  cartItems.innerHTML = '';
-  let total = 0;
-
-  Object.values(window.posCart).forEach(item => {
-    total += item.price * item.qty;
-
-    cartItems.innerHTML += `
-      <div class="cart-row">
-        <span>${item.name} × ${item.qty}</span>
-        <button class="cart-remove" data-id="${item.product_id}">✕</button>
-      </div>
-    `;
-  });
-
-  totalEl.textContent = total.toFixed(2);
-}
-
-/* REMOVE ITEM FROM CART */
-document.addEventListener('click', e => {
-  if (e.target.classList.contains('cart-remove')) {
-    const id = e.target.dataset.id;
-    delete window.posCart[id];
-    renderCart();
+    totalEl.textContent = total.toFixed(2);
   }
-});
 
-/* ======================================================
-   COMPLETE SALE (POS PAGE ONLY)
-====================================================== */
+  /* REMOVE ITEM FROM CART */
+  document.addEventListener('click', e => {
+    if (e.target.classList.contains('cart-remove')) {
+      delete window.posCart[e.target.dataset.id];
+      renderCart();
+    }
+  });
 
-const completeBtn = document.getElementById('btn-complete-sale');
+  /* ======================================================
+    COMPLETE SALE → CONFIRM MODAL
+  ====================================================== */
 
-if (completeBtn) {
-  completeBtn.addEventListener('click', async () => {
-    const items = Object.values(window.posCart);
-    const payment_mode = document.getElementById('payment-mode')?.value;
+  const completeBtn = document.getElementById('btn-complete-sale');
+  const confirmModal = document.getElementById('confirmSaleModal');
+  const confirmBtn = document.getElementById('btnConfirmSale');
+  const cancelConfirmBtn = document.getElementById('btnCancelConfirm');
 
-    if (!items.length) {
+  let lastOrderId = null;
+  let undoTimer = null;
+
+  completeBtn?.addEventListener('click', () => {
+    if (!Object.keys(window.posCart).length) {
       alert('Cart is empty');
       return;
     }
+
+    confirmModal.classList.remove('hidden');
+  });
+
+  /* CANCEL CONFIRM */
+  cancelConfirmBtn?.addEventListener('click', () => {
+    confirmModal.classList.add('hidden');
+  });
+
+  /* ======================================================
+    CONFIRM SALE (ACTUAL SAVE)
+  ====================================================== */
+
+  confirmBtn?.addEventListener('click', async () => {
+    const items = Object.values(window.posCart);
+    const payment_mode = document.getElementById('payment-mode')?.value;
+
+    if (!items.length) return;
 
     const res = await fetch('/admin/pos/complete', {
       method: 'POST',
@@ -98,96 +117,135 @@ if (completeBtn) {
 
     const data = await res.json();
 
-    if (data.ok) {
-      window.posCart = {};
-      window.location.href = `/admin/pos/receipt/${data.orderId}`;
-    } else {
-      alert('Failed to complete sale');
+    if (!data.ok) {
+      alert(data.error || 'Failed to complete sale');
+      return;
     }
+
+    confirmModal.classList.add('hidden');
+
+    lastOrderId = data.orderId;
+    window.posCart = {};
+    renderCart();
+
+    showUndoBar(lastOrderId);
   });
+
+  /* ======================================================
+    UNDO BAR (10 SECONDS — NO PIN)
+  ====================================================== */
+  function showUndoBar(orderId) {
+  const bar = document.getElementById('undoBar');
+  const btn = document.getElementById('btnUndoSale');
+  const cd  = document.getElementById('undoCountdown');
+
+  let seconds = 10;
+  bar.classList.remove('hidden');
+  cd.textContent = seconds;
+
+  const timer = setInterval(async () => {
+    seconds--;
+    cd.textContent = seconds;
+
+    if (seconds <= 0) {
+      clearInterval(timer);
+      bar.classList.add('hidden');
+
+      await fetch('/admin/pos/confirm',{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({ order_id: orderId })
+      });
+
+      window.location.href = `/admin/pos/receipt/${orderId}`;
+    }
+  },1000);
+
+  btn.onclick = async () => {
+    clearInterval(timer);
+    bar.classList.add('hidden');
+
+    await fetch('/admin/pos/undo-temp',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({ order_id: orderId })
+    });
+
+    window.location.href = '/admin/pos';
+  };
 }
-/* ======================================================
-   VOID / RETURN — RECEIPT PAGE ONLY (FIXED)
-====================================================== */
 
-const receiptRoot = document.getElementById('receiptRoot');
-const voidBtn = document.getElementById('btnVoidSale');
-const voidModal = document.getElementById('voidModal');
-const cancelVoidBtn = document.getElementById('btnCancelVoid');
-const verifyPinBtn = document.getElementById('verifyPin');
-const confirmVoidBtn = document.getElementById('confirmVoid');
 
-const pinStage = document.getElementById('pinStage');
-const voidStage = document.getElementById('voidStage');
-const pinInputs = document.querySelectorAll('.pin-boxes input');
-const reasonInput = document.getElementById('voidReason');
+  /**
+   * FINALIZE SALE (CONFIRM DRAFT)
+   */
+  async function finalizeSale(orderId) {
+    await fetch('/admin/pos/confirm', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ order_id: orderId })
+    });
 
-let verifiedPin = null;
+    window.location.href = `/admin/pos/receipt/${orderId}`;
+  }
 
-/* RUN ONLY ON RECEIPT PAGE */
-if (receiptRoot && voidModal) {
-  const ORDER_ID = receiptRoot.dataset.orderId;
 
-  /* OPEN MODAL */
-  if (voidBtn) {
-    voidBtn.addEventListener('click', () => {
+  /* ======================================================
+    ADMIN VOID — RECEIPT PAGE ONLY (PIN REQUIRED)
+  ====================================================== */
+
+  const receiptRoot = document.getElementById('receiptRoot');
+  const voidBtn = document.getElementById('btnVoidSale');
+  const voidModal = document.getElementById('voidModal');
+  const cancelVoidBtn = document.getElementById('btnCancelVoid');
+  const verifyPinBtn = document.getElementById('verifyPin');
+  const confirmVoidBtn = document.getElementById('confirmVoid');
+
+  const pinStage = document.getElementById('pinStage');
+  const voidStage = document.getElementById('voidStage');
+  const pinInputs = document.querySelectorAll('.pin-boxes input');
+  const reasonInput = document.getElementById('voidReason');
+
+  let verifiedPin = null;
+
+  if (receiptRoot && voidModal) {
+    const ORDER_ID = receiptRoot.dataset.orderId;
+
+    voidBtn?.addEventListener('click', () => {
       voidModal.classList.remove('hidden');
     });
-  }
 
-  /* CLOSE / CANCEL MODAL */
-  if (cancelVoidBtn) {
-    cancelVoidBtn.addEventListener('click', closeVoidModal);
-  }
+    cancelVoidBtn?.addEventListener('click', closeVoidModal);
 
-  function closeVoidModal() {
-    voidModal.classList.add('hidden');
+    function closeVoidModal() {
+      voidModal.classList.add('hidden');
+      pinStage.classList.remove('hidden');
+      voidStage.classList.add('hidden');
+      pinInputs.forEach(i => (i.value = ''));
+      reasonInput.value = '';
+      verifiedPin = null;
+    }
 
-    pinStage.classList.remove('hidden');
-    voidStage.classList.add('hidden');
-
-    pinInputs.forEach(i => (i.value = ''));
-    if (reasonInput) reasonInput.value = '';
-
-    verifiedPin = null;
-  }
-
-  /* PIN AUTO-ADVANCE */
-  pinInputs.forEach((input, i) => {
-    input.addEventListener('input', () => {
-      if (input.value && pinInputs[i + 1]) {
-        pinInputs[i + 1].focus();
-      }
+    pinInputs.forEach((input, i) => {
+      input.addEventListener('input', () => {
+        if (input.value && pinInputs[i + 1]) {
+          pinInputs[i + 1].focus();
+        }
+      });
     });
-  });
 
-  /* VERIFY PIN */
-  if (verifyPinBtn) {
-    verifyPinBtn.addEventListener('click', () => {
+    verifyPinBtn?.addEventListener('click', () => {
       const pin = [...pinInputs].map(i => i.value).join('');
-
-      if (pin.length !== 4) {
-        alert('Enter 4-digit PIN');
-        return;
-      }
+      if (pin.length !== 4) return alert('Enter 4-digit PIN');
 
       verifiedPin = pin;
       pinStage.classList.add('hidden');
       voidStage.classList.remove('hidden');
     });
-  }
 
-  /* CONFIRM VOID */
-  if (confirmVoidBtn) {
-    confirmVoidBtn.addEventListener('click', async () => {
-      if (!verifiedPin) {
-        alert('Please verify PIN first');
-        return;
-      }
-
-      if (!reasonInput || !reasonInput.value.trim()) {
-        alert('Reason required');
-        return;
+    confirmVoidBtn?.addEventListener('click', async () => {
+      if (!verifiedPin || !reasonInput.value.trim()) {
+        return alert('PIN and reason required');
       }
 
       const res = await fetch('/admin/pos/void', {
@@ -203,11 +261,10 @@ if (receiptRoot && voidModal) {
       const data = await res.json();
 
       if (data.ok) {
-        alert('Sale voided successfully');
+        alert('Sale voided');
         window.location.href = '/admin/pos';
       } else {
         alert(data.error || 'Void failed');
       }
     });
   }
-}

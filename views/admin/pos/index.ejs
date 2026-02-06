@@ -11,39 +11,51 @@
 
 <main id="panel-container" class="pos-layout">
 
-  <!-- DAILY SUMMARY -->
+  <!-- =========================
+       DAILY SUMMARY
+  ========================== -->
   <section class="pos-summary">
     <div class="sum-card">
       <div class="sum-title">Transactions</div>
       <div class="sum-value"><%= summary.transactions || 0 %></div>
     </div>
+
     <div class="sum-card">
       <div class="sum-title">Total Sales</div>
       <div class="sum-value">₱<%= summary.total_sales || 0 %></div>
     </div>
+
     <div class="sum-card">
       <div class="sum-title">Cash</div>
       <div class="sum-value">₱<%= summary.cash_total || 0 %></div>
     </div>
+
     <div class="sum-card">
       <div class="sum-title">GCash</div>
       <div class="sum-value">₱<%= summary.gcash_total || 0 %></div>
     </div>
   </section>
 
-  
-
-  <!-- PRODUCTS -->
+  <!-- =========================
+       PRODUCTS
+  ========================== -->
   <section class="pos-products">
     <h2>Products</h2>
-    <input id="pos-search" placeholder="Search product">
+
+    <input
+      id="pos-search"
+      type="text"
+      placeholder="Search product"
+    >
 
     <div class="pos-grid">
       <% products.forEach(p => { %>
-        <div class="pos-card"
+        <div
+          class="pos-card"
           data-id="<%= p.id %>"
           data-name="<%= p.name %>"
-          data-price="<%= p.price %>">
+          data-price="<%= p.price %>"
+        >
           <div class="pos-name"><%= p.name %></div>
           <div class="pos-price">₱<%= p.price %></div>
           <div class="pos-stock">Stock: <%= p.stock %></div>
@@ -52,114 +64,159 @@
     </div>
   </section>
 
+  <!-- =========================
+       CART
+  ========================== -->
+  <section class="pos-cart">
+    <h2>Cart</h2>
 
-  <!-- CART -->
-<section class="pos-cart">
-  <h2>Cart</h2>
+    <!-- Injected by JS -->
+    <div id="cart-items"></div>
 
-  <!-- Cart items will be injected by JS -->
-  <div id="cart-items"></div>
+    <div class="pos-total">
+      Total: ₱<span id="cart-total">0</span>
+    </div>
 
-  <div class="pos-total">
-    Total: ₱<span id="cart-total">0</span>
+    <div class="pos-controls">
+      <select id="payment-mode" class="pos-payment">
+        <option value="COD">Cash</option>
+        <option value="GCASH">GCash</option>
+      </select>
+
+      <button
+        type="button"
+        id="btn-complete-sale"
+        class="btn-complete-sale"
+      >
+        Complete Sale
+      </button>
+    </div>
+  </section>
+
+  <!-- =========================
+       DAILY POS SALES
+  ========================== -->
+  <section class="pos-sales-card">
+
+    <div class="pos-sales-header">
+      <h3>Daily POS Sales</h3>
+
+      <form method="GET" class="pos-sales-filter">
+        <input type="date" name="date" value="<%= date %>">
+        <button type="submit" class="btn-filter">View</button>
+      </form>
+    </div>
+
+    <% if (!sales.length) { %>
+      <div class="pos-empty">
+        No sales recorded for this date
+      </div>
+    <% } else { %>
+
+      <div class="pos-sales-list">
+        <% sales.forEach((s, idx) => { %>
+
+          <div class="
+            pos-sale-row
+            <%= idx === 0 ? 'latest' : '' %>
+            <%= s.status === 'voided' ? 'sale-voided' : '' %>
+          ">
+
+            <!-- LEFT -->
+            <div class="sale-left">
+              <div class="sale-time">
+                <%= new Date(s.created_at).toLocaleTimeString() %>
+              </div>
+
+              <div class="sale-payment <%= s.payment_mode.toLowerCase() %>">
+                <%= s.payment_mode %>
+              </div>
+            </div>
+
+            <!-- CENTER (VOIDED) -->
+            <% if (s.status === 'voided') { %>
+              <div class="sale-center">
+                <span class="badge badge-voided">VOIDED</span>
+              </div>
+            <% } %>
+
+            <!-- RIGHT -->
+            <div class="sale-right">
+              <div class="sale-total">
+                ₱<%= Number(s.total).toFixed(2) %>
+              </div>
+
+              <% if (s.status === 'voided') { %>
+                <span class="sale-receipt disabled">
+                  Receipt
+                </span>
+              <% } else { %>
+                <a
+                  href="/admin/pos/receipt/<%= s.id %>"
+                  target="_blank"
+                  class="sale-receipt"
+                >
+                  Receipt
+                </a>
+              <% } %>
+            </div>
+
+          </div>
+
+        <% }) %>
+      </div>
+
+    <% } %>
+
+  </section>
+
+  <!-- =========================
+       CONFIRM SALE MODAL
+  ========================== -->
+  <div id="confirmSaleModal" class="pos-modal hidden">
+    <div class="pos-modal-box">
+      <h3>Confirm Sale</h3>
+      <p>Please confirm this transaction.</p>
+
+      <div class="pos-modal-actions">
+        <button
+          type="button"
+          id="btnCancelConfirm"
+          class="btn-secondary"
+        >
+          Cancel
+        </button>
+
+        <button
+          type="button"
+          id="btnConfirmSale"
+          class="btn-primary"
+        >
+          Confirm Sale
+        </button>
+      </div>
+    </div>
   </div>
 
-  <div class="pos-controls">
-    <select id="payment-mode" class="pos-payment">
-  <option value="COD">Cash</option>
-  <option value="GCASH">GCash</option>
-</select>
-
-
+  <!-- =========================
+       UNDO BAR (10s)
+  ========================== -->
+  <div id="undoBar" class="pos-undo hidden">
+    <span>
+      Sale completed.
+      <strong>
+        Undo in <span id="undoCountdown">10</span>s
+      </strong>
+    </span>
 
     <button
       type="button"
-      class="btn-complete-sale"
-      id="btn-complete-sale"
+      id="btnUndoSale"
+      class="btn-undo"
     >
-      Complete Sale
+      Undo
     </button>
   </div>
-</section>
-
-
-<!-- POS SALES REPORT -->
-<!-- POS DAILY SALES -->
-<section class="pos-sales-card">
-
-  <div class="pos-sales-header">
-    <h3>Daily POS Sales</h3>
-
-    <form method="GET" class="pos-sales-filter">
-      <input type="date" name="date" value="<%= date %>">
-      <button type="submit" class="btn-filter">View</button>
-    </form>
-  </div>
-
-  <% if (!sales.length) { %>
-    <div class="pos-empty">No sales recorded for this date</div>
-  <% } else { %>
-
-    <div class="pos-sales-list">
-      <% sales.forEach((s, idx) => { %>
-
-        <div class="
-          pos-sale-row
-          <%= idx === 0 ? 'latest' : '' %>
-          <%= s.status === 'voided' ? 'sale-voided' : '' %>
-        ">
-
-          <!-- LEFT -->
-          <div class="sale-left">
-            <div class="sale-time">
-              <%= new Date(s.created_at).toLocaleTimeString() %>
-            </div>
-
-            <div class="sale-payment <%= s.payment_mode.toLowerCase() %>">
-              <%= s.payment_mode %>
-            </div>
-          </div>
-
-          <!-- CENTER (VOIDED ONLY) -->
-          <% if (s.status === 'voided') { %>
-            <div class="sale-center">
-              <span class="badge badge-voided">VOIDED</span>
-            </div>
-          <% } %>
-
-          <!-- RIGHT -->
-          <div class="sale-right">
-            <div class="sale-total">
-              ₱<%= Number(s.total).toFixed(2) %>
-            </div>
-
-            <% if (s.status === 'voided') { %>
-              <span class="sale-receipt disabled">
-                Receipt
-              </span>
-            <% } else { %>
-              <a
-                href="/admin/pos/receipt/<%= s.id %>"
-                target="_blank"
-                class="sale-receipt"
-              >
-                Receipt
-              </a>
-            <% } %>
-          </div>
-
-        </div>
-
-      <% }) %>
-    </div>
-
-  <% } %>
-
-</section>
-
-
-
-
 
 </main>
 
