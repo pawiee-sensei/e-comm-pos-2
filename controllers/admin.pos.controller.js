@@ -13,7 +13,6 @@ exports.index = async (req, res) => {
     SELECT p.*, c.name AS category_name
     FROM products p
     LEFT JOIN categories c ON c.id = p.category_id
-    WHERE p.stock > 0
     ORDER BY p.name ASC
   `);
 

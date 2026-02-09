@@ -23,23 +23,39 @@
 
   /* ADD PRODUCT TO CART */
   document.querySelectorAll('.pos-card').forEach(card => {
-    card.addEventListener('click', () => {
-      const id = card.dataset.id;
+  card.addEventListener('click', () => {
 
-      if (!window.posCart[id]) {
-        window.posCart[id] = {
-          product_id: id,
-          name: card.dataset.name,
-          price: Number(card.dataset.price),
-          qty: 1
-        };
-      } else {
-        window.posCart[id].qty++;
+    const stock = Number(card.dataset.stock);
+
+    // 🚫 HARD BLOCK — OUT OF STOCK
+    if (stock <= 0) {
+      return;
+    }
+
+    const id = card.dataset.id;
+
+    if (!window.posCart[id]) {
+      window.posCart[id] = {
+        product_id: id,
+        name: card.dataset.name,
+        price: Number(card.dataset.price),
+        qty: 1
+      };
+    } else {
+
+      // 🚫 PREVENT EXCEEDING STOCK
+      if (window.posCart[id].qty >= stock) {
+        alert('Not enough stock');
+        return;
       }
 
-      renderCart();
-    });
+      window.posCart[id].qty++;
+    }
+
+    renderCart();
   });
+});
+
 
   /* RENDER CART */
   function renderCart() {
@@ -268,3 +284,23 @@
       }
     });
   }
+
+  /* ======================================================
+   POS PRODUCT CAROUSEL
+====================================================== */
+
+const carousel = document.getElementById('posCarousel');
+const btnPrev = document.getElementById('carouselPrev');
+const btnNext = document.getElementById('carouselNext');
+
+if (carousel && btnPrev && btnNext) {
+  const scrollAmount = 320; // ~2 cards
+
+  btnNext.addEventListener('click', () => {
+    carousel.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+  });
+
+  btnPrev.addEventListener('click', () => {
+    carousel.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+  });
+}

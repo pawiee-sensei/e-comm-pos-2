@@ -40,29 +40,58 @@
        PRODUCTS
   ========================== -->
   <section class="pos-products">
-    <h2>Products</h2>
+  <h2>Products</h2>
 
-    <input
-      id="pos-search"
-      type="text"
-      placeholder="Search product"
-    >
+  <input
+    id="pos-search"
+    type="text"
+    placeholder="Search product"
+  >
 
-    <div class="pos-grid">
-      <% products.forEach(p => { %>
-        <div
-          class="pos-card"
-          data-id="<%= p.id %>"
-          data-name="<%= p.name %>"
-          data-price="<%= p.price %>"
-        >
-          <div class="pos-name"><%= p.name %></div>
-          <div class="pos-price">₱<%= p.price %></div>
+  <div class="pos-carousel">
+
+  <!-- LEFT BUTTON -->
+  <button class="carousel-btn left" id="carouselPrev">
+    ‹
+  </button>
+
+  <!-- SCROLL AREA -->
+  <div class="pos-carousel-track" id="posCarousel">
+
+    <% products.forEach(p => { %>
+      <div
+        class="pos-card
+          <%= p.stock === 0 ? 'out-of-stock' : '' %>
+          <%= p.stock > 0 && p.stock <= 5 ? 'low-stock' : '' %>"
+        data-id="<%= p.id %>"
+        data-name="<%= p.name %>"
+        data-price="<%= p.price %>"
+        data-stock="<%= p.stock %>"
+      >
+        <div class="pos-name"><%= p.name %></div>
+        <div class="pos-price">₱<%= p.price %></div>
+
+        <% if (p.stock === 0) { %>
+          <div class="stock-badge out">OUT</div>
+        <% } else if (p.stock <= 5) { %>
+          <div class="stock-badge low">LOW (<%= p.stock %>)</div>
+        <% } else { %>
           <div class="pos-stock">Stock: <%= p.stock %></div>
-        </div>
-      <% }) %>
-    </div>
-  </section>
+        <% } %>
+      </div>
+    <% }) %>
+
+  </div>
+
+  <!-- RIGHT BUTTON -->
+  <button class="carousel-btn right" id="carouselNext">
+    ›
+  </button>
+
+</div>
+
+</section>
+
 
   <!-- =========================
        CART
