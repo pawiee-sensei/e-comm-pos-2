@@ -108,7 +108,7 @@ app.use('/admin', require('./routes/admin.orders.routes'));
 
 app.use('/admin', require('./routes/admin.pos.routes'));
 
-
+app.use('/admin', require('./routes/admin.strategy.routes'));
 
 /**
  * ===============================

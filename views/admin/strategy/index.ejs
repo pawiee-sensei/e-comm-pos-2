@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Strategy</title>
+  <link rel="stylesheet" href="/public/css/admin.css">
+  <link rel="stylesheet" href="/public/css/admin.strategy.css">
+</head>
+<body>
+
+<%- include('../sidebar') %>
+
+<main id="panel-container">
+
+  <!-- METRICS -->
+  <section class="strategy-metrics">
+    <div class="metric-card">
+      <div class="metric-label">Revenue</div>
+      <div class="metric-value">₱<%= metrics.revenue %></div>
+    </div>
+
+    <div class="metric-card">
+      <div class="metric-label">Transactions</div>
+      <div class="metric-value"><%= metrics.transactions %></div>
+    </div>
+
+    <div class="metric-card">
+      <div class="metric-label">Decision Confidence</div>
+      <div class="metric-value">High</div>
+    </div>
+  </section>
+
+  <!-- FILTER -->
+  <form method="GET" class="strategy-filter">
+    <select name="period">
+      <option value="1" <%= period==1?'selected':'' %>>Today</option>
+      <option value="7" <%= period==7?'selected':'' %>>7 Days</option>
+      <option value="30" <%= period==30?'selected':'' %>>30 Days</option>
+    </select>
+    <button>Apply</button>
+  </form>
+
+  <!-- TABLE 1 -->
+  <h3>Sales & Profit Impact</h3>
+  <table class="strategy-table">
+    <tr>
+      <th>Product</th>
+      <th>Units Sold</th>
+      <th>Revenue</th>
+      <th>Impact</th>
+    </tr>
+    <% salesImpact.forEach(p => { %>
+      <tr>
+        <td><%= p.name %></td>
+        <td><%= p.units_sold %></td>
+        <td>₱<%= p.revenue %></td>
+        <td><%= p.revenue > 5000 ? 'High' : 'Medium' %></td>
+      </tr>
+    <% }) %>
+  </table>
+
+  <!-- TABLE 2 -->
+  <h3>Inventory & Opportunity Risk</h3>
+  <table class="strategy-table">
+    <tr>
+      <th>Product</th>
+      <th>Stock</th>
+      <th>Avg Daily Sales</th>
+      <th>Status</th>
+    </tr>
+    <% inventoryRisk.forEach(p => { %>
+      <tr>
+        <td><%= p.name %></td>
+        <td><%= p.stock %></td>
+        <td><%= Number(p.avg_daily_sales || 0).toFixed(2) %></td>
+        <td>
+          <%
+  const avg = Number(p.avg_daily_sales || 0);
+%>
+<%= p.stock > avg * 30 ? 'Overstock Risk' : 'Healthy' %>
+
+        </td>
+      </tr>
+    <% }) %>
+  </table>
+
+  <!-- TABLE 3 -->
+  <h3>Missed Opportunities</h3>
+  <table class="strategy-table">
+    <tr>
+      <th>Product</th>
+      <th>Stock</th>
+      <th>Issue</th>
+      <th>Action</th>
+    </tr>
+    <% missed.forEach(p => { %>
+      <tr>
+        <td><%= p.name %></td>
+        <td><%= p.stock %></td>
+        <td>Low / Out of Stock</td>
+        <td>Restock Soon</td>
+      </tr>
+    <% }) %>
+  </table>
+
+</main>
+
+</body>
+</html>

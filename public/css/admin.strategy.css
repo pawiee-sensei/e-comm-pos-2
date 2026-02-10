@@ -1,0 +1,45 @@
+.strategy-metrics {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.metric-card {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 16px;
+  flex: 1;
+}
+
+.metric-label {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.metric-value {
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.strategy-filter {
+  margin-bottom: 20px;
+}
+
+.strategy-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 28px;
+}
+
+.strategy-table th,
+.strategy-table td {
+  border-bottom: 1px solid #e5e7eb;
+  padding: 10px;
+  text-align: left;
+}
+
+.strategy-table th {
+  font-size: 13px;
+  color: #374151;
+}
