@@ -114,12 +114,14 @@ exports.update = async (req, res) => {
   if (!existing) return res.status(404).send('Product not found');
 
   const payload = {
-    name: req.body.name,
-    category_id: req.body.category_id,
-    price: req.body.price,
-    stock: existing.stock,
-    image: req.file ? req.file.filename : req.body.existing_image || existing.image
-  };
+  name: req.body.name,
+  category_id: req.body.category_id,
+  price: req.body.price,
+  cost: req.body.cost,
+  stock: existing.stock,
+  image: req.file ? req.file.filename : req.body.existing_image || existing.image
+};
+
 
   await Product.update(id, payload);
 
@@ -160,15 +162,17 @@ exports.delete = async (req, res) => {
 // ======================================================
 exports.createAjax = async (req, res) => {
   try {
-    const { name, category_id, price, stock } = req.body;
+    const { name, category_id, price, cost, stock } = req.body;
+
 
     const insertId = await Product.create({
-      name,
-      category_id,
-      price: Number(price),
-      stock: Number(stock),
-      image: req.file ? req.file.filename : null
-    });
+  name,
+  category_id,
+  price: Number(price),
+  cost: Number(cost),
+  stock: Number(stock),
+  image: req.file ? req.file.filename : null
+});
 
     // STOCK LOG — initial stock
     await Stock.log({

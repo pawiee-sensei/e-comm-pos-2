@@ -10,11 +10,13 @@ exports.index = async (req, res) => {
   const date = req.query.date || new Date().toISOString().slice(0, 10);
 
   const [products] = await db.query(`
-    SELECT p.*, c.name AS category_name
-    FROM products p
-    LEFT JOIN categories c ON c.id = p.category_id
-    ORDER BY p.name ASC
-  `);
+  SELECT p.*, c.name AS category_name
+  FROM products p
+  LEFT JOIN categories c ON c.id = p.category_id
+  WHERE p.is_active = 1
+  ORDER BY p.name ASC
+`);
+
 
   // DAILY SUMMARY — CONFIRMED POS SALES ONLY
   const [[summary]] = await db.query(`

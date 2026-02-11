@@ -2,17 +2,18 @@ const db = require('../db');
 
 exports.findAll = async ({ search, category_id, offset, limit }) => {
   let sql = `
-    SELECT 
-      p.id,
-      p.name,
-      p.price,
-      p.stock,
-      p.image,
-      p.category_id,
+   SELECT 
+  p.id,
+  p.name,
+  p.price,
+  p.cost,
+  p.stock,
+  p.image,
+  p.category_id,
       c.name AS category_name
     FROM products p
     LEFT JOIN categories c ON c.id = p.category_id
-    WHERE 1=1
+    WHERE p.is_active = 1
   `;
   const params = [];
 
@@ -97,38 +98,42 @@ exports.countStockEqual = async (value) => {
 };
 
 exports.update = async (id, data) => {
-  const { name, category_id, price, stock, image } = data;
+  const { name, category_id, price, cost, stock, image } = data;
+
   await db.query(
     `UPDATE products
-     SET name=?, category_id=?, price=?, stock=?, image=?
+     SET name=?, category_id=?, price=?, cost=?, stock=?, image=?
      WHERE id=?`,
-    [name, category_id, price, stock, image, id]
+    [name, category_id, price, cost, stock, image, id]
   );
 };
 
+
 exports.delete = async (id) => {
   await db.query(
-    `DELETE FROM products WHERE id=?`,
+    `UPDATE products SET is_active = 0 WHERE id=?`,
     [id]
   );
 };
 
-exports.create = async ({ name, category_id, price, stock, image }) => {
+
+exports.create = async ({ name, category_id, price, cost, stock, image }) => {
   const [r] = await db.query(
-    `INSERT INTO products (name, category_id, price, stock, image)
-     VALUES (?, ?, ?, ?, ?)`,
-    [name, category_id, price, stock, image || null]
+    `INSERT INTO products (name, category_id, price, cost, stock, image)
+     VALUES (?, ?, ?, ?, ?, ?)`,
+    [name, category_id, price, cost, stock, image || null]
   );
   return r.insertId;
 };
 
-exports.updateProduct = async ({ id, name, price, category_id, image }) => {
-  let sql = `
-    UPDATE products
-    SET name=?, price=?, category_id=?, updated_at=NOW()
-  `;
 
-  const params = [name, price, category_id];
+exports.updateProduct = async ({ id, name, price, cost, category_id, image }) => {
+  let sql = `
+  UPDATE products
+  SET name=?, price=?, cost=?, category_id=?, updated_at=NOW()
+`;
+
+const params = [name, price, cost, category_id];
 
   if (image) {
     sql += `, image = ?`;

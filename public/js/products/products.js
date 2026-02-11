@@ -124,8 +124,10 @@ document.getElementById('add-submit').onclick = async (e) => {
   e.preventDefault();
 
   const fd = new FormData();
+
   fd.append('name', document.getElementById('p-name').value);
   fd.append('price', document.getElementById('p-price').value);
+  fd.append('cost', document.getElementById('p-cost').value);   // ✅ ADD THIS
   fd.append('stock', document.getElementById('p-stock').value);
   fd.append('category_id', document.getElementById('p-category').value);
 
@@ -145,6 +147,7 @@ document.getElementById('add-submit').onclick = async (e) => {
 
   location.reload();
 };
+
 
 
 
