@@ -26,17 +26,34 @@ app.use(
     contentSecurityPolicy: {
       directives: {
         defaultSrc: ["'self'"],
-        scriptSrc: ["'self'"],
-        styleSrc: ["'self'"],
+
+        /* allow Chart.js CDN */
+        scriptSrc: [
+          "'self'",
+          "https://cdn.jsdelivr.net",
+          "'unsafe-inline'"   // allow inline EJS scripts (charts)
+        ],
+
+        styleSrc: [
+          "'self'",
+          "'unsafe-inline'"   // allow inline styles if needed
+        ],
+
         imgSrc: ["'self'", "data:"],
         fontSrc: ["'self'"],
-        connectSrc: ["'self'", "http://localhost:3000"], // allow AJAX fetch
+
+        connectSrc: [
+          "'self'",
+          "http://localhost:3000"
+        ],
+
         objectSrc: ["'none'"],
         upgradeInsecureRequests: []
       }
     }
   })
 );
+
 
 /**
  * ===============================

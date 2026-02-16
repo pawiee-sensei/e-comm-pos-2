@@ -1,8 +1,8 @@
-    const express = require('express');
-    const router = express.Router();
-    const { requireAdmin } = require('../middleware/auth');
+const express = require('express');
+const router = express.Router();
+const dashboard = require('../controllers/admin.dashboard.controller');
 
-    router.get('/', (req, res) => res.render('admin/dashboard'));
-    router.get('/home', (req, res) => res.render('admin/dashboard'));
+router.get('/', dashboard.index);
+router.get('/home', dashboard.index);
 
-    module.exports = router;    
+module.exports = router;

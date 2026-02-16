@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Dashboard</title>
+  <link rel="stylesheet" href="/public/css/admin.css">
+  <link rel="stylesheet" href="/public/css/admin.dashboard.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+<%- include('../sidebar') %>
+
+<main id="panel-container">
+
+  <!-- ================= KPI CARDS ================= -->
+  <section class="dash-kpi-grid">
+
+    <div class="kpi-card">
+  <div class="kpi-title">Today Revenue</div>
+  <div class="kpi-value">₱<%= kpiCards.todayRevenue.toLocaleString() %></div>
+</div>
+
+<div class="kpi-card">
+  <div class="kpi-title">7 Day Revenue</div>
+  <div class="kpi-value">₱<%= kpiCards.weekRevenue.toLocaleString() %></div>
+</div>
+
+<div class="kpi-card">
+  <div class="kpi-title">30 Day Revenue</div>
+  <div class="kpi-value">₱<%= kpiCards.monthRevenue.toLocaleString() %></div>
+</div>
+
+<div class="kpi-card">
+  <div class="kpi-title">Total Products</div>
+  <div class="kpi-value"><%= kpiCards.totalProducts %></div>
+</div>
+
+
+  </section>
+
+  <!-- ================= BUSINESS ALERTS ================= -->
+  <section class="dash-alerts">
+    <h3>Alerts</h3>
+
+    <% if(!alerts.length){ %>
+      <div class="alert good">All systems healthy ✔</div>
+    <% } %>
+
+    <% alerts.forEach(a => { %>
+      <div class="alert <%= a.type %>">
+        <strong><%= a.title %></strong>
+        <span><%= a.message %></span>
+      </div>
+    <% }) %>
+
+  </section>
+
+  <!-- ================= CHARTS ================= -->
+  <section class="dash-charts">
+
+    <div class="chart-card">
+    <h3>Revenue Trend</h3>
+    <canvas id="revenueChart"></canvas>
+    </div>
+
+    <div class="chart-card">
+    <h3>Orders Trend</h3>
+    <canvas id="ordersChart"></canvas>
+    </div>
+
+
+  </section>
+
+  <!-- ================= TOP PRODUCTS ================= -->
+  <section class="dash-table">
+    <h3>Top Selling Products (7 days)</h3>
+
+    <table>
+      <tr>
+        <th>Product</th>
+        <th>Units Sold</th>
+      </tr>
+
+      <% topProducts.forEach(p => { %>
+        <tr>
+          <td><%= p.name %></td>
+          <td><%= p.sold %></td>
+        </tr>
+      <% }) %>
+
+    </table>
+  </section>
+
+</main>
+<script>
+/* ============================
+   REVENUE LINE CHART
+============================ */
+new Chart(document.getElementById('revenueChart'), {
+  type: 'line',
+  data: {
+    labels: <%- JSON.stringify(charts.days) %>,
+    datasets: [{
+      label: 'Revenue',
+      data: <%- JSON.stringify(charts.revenue) %>,
+      tension: 0.4,
+      fill: true
+    }]
+  },
+  options: {
+    responsive: true,
+    plugins: { legend: { display:false } }
+  }
+});
+
+/* ============================
+   ORDERS BAR CHART
+============================ */
+new Chart(document.getElementById('ordersChart'), {
+  type: 'bar',
+  data: {
+    labels: <%- JSON.stringify(charts.days) %>,
+    datasets: [{
+      label: 'Orders',
+      data: <%- JSON.stringify(charts.orders) %>
+    }]
+  },
+  options: {
+    responsive: true,
+    plugins: { legend: { display:false } }
+  }
+});
+</script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+</body>
+</html>
